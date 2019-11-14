@@ -30,7 +30,7 @@ app.get('/login', function (req, res) {
 });
 
 app.get('/sign-up', function (req, res) {
-	res.render('login')
+	res.render('sign-up')
 });
 
 // start up the server
