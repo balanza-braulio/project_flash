@@ -3,6 +3,7 @@ const hbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const session = require('express-session')
 const bcrypt = require('bcrypt');
+const path = require('path')
 
 app = express()
 app.set('port', 3002)
@@ -18,7 +19,7 @@ app.engine('html', hbs({
 	layoutsDir: __dirname + '/views/layouts/',
 	partialsDir: __dirname + '/views/partials/'
 }));
-
+app.use(express.static(path.join(__dirname, 'static')));
 
 app.get('/', function (req, res) {
 	res.render('welcome')
