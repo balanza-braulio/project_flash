@@ -25,6 +25,14 @@ app.get('/', function (req, res) {
 	res.render('welcome')
 });
 
+app.get('/login', function (req, res) {
+	res.render('login')
+});
+
+app.get('/sign-up', function (req, res) {
+	res.render('login')
+});
+
 // start up the server
 var server = app.listen(app.get('port'), function () {
 	console.log("Server started...")
