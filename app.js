@@ -23,27 +23,70 @@ app.engine('html', hbs({
 app.use(express.static(path.join(__dirname, 'static')));
 
 app.get('/', function (req, res) {
-	res.render('welcome')
+	if (req.session.user == null) {
+		res.render('welcome')
+	} else {
+		res.render('home', { user: req.session.user })
+	}
+
 })
 
 app.get('/login', function (req, res) {
-	res.render('login')
+	if (req.session.user != null) {
+		res.redirect('/')
+	} else {
+		res.render('login')
+	}
 })
 
-app.post('/login', function(req,res){
+app.get('/home', function (req, res) {
+	if (req.session.user == null) {
+		res.redirect('/')
+	} else {
+		res.render('home', { user: req.session.user })
+	}
+})
+
+app.post('/login', async function (req, res) {
 	username = req.body.username
 	password = req.body.password
-	console.log(username)
-	console.log(password)
-	res.render('login', {error:true})
+	if (username != '' && password != '') {
+		await User.findOne({ where: { username: username } }).then(async (user) => {
+			if (user != null) {
+				user = user['dataValues']
+				hash = user['password_hash']
+				await bcrypt.compare(password, hash, (err, match) => {
+					if (match) {
+						console.log("here1")
+						req.session.user = user
+						res.redirect('/home')
+					} else {
+						res.render('login', { error: true, username: username })
+					}
+				});
+			} else {
+				res.render('login', { error: true, username: username })
+			}
+		})
+	} else {
+		res.render('login', { error: true, username: username })
+	}
+})
 
+app.get('/logout', function (req, res) {
+	req.session.user = null
+	res.redirect('/')
 })
 
 app.get('/sign-up', function (req, res) {
-	res.render('sign-up')
+	if (req.session.user != null) {
+		res.redirect('/')
+	} else {
+		res.render('sign-up')
+	}
 })
 
-app.post('/sign-up', function(req,res){
+app.post('/sign-up', function (req, res) {
 
 })
 
