@@ -35,6 +35,11 @@ body{
     color: #fff
 }
 
+.error-text{
+    color: #c0392b;
+
+}
+
 .user_card {
     height: 400px;
     width: 350px;
