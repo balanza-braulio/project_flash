@@ -37,7 +37,13 @@ body{
 
 .error-text{
     color: #c0392b;
+    text-align: center;
+    font-size: 12px;
+}
 
+.error-text-login{
+    color: #c0392b;
+    text-align: center;
 }
 
 .user_card {

@@ -57,7 +57,6 @@ app.post('/login', async function (req, res) {
 				hash = user['password_hash']
 				await bcrypt.compare(password, hash, (err, match) => {
 					if (match) {
-						console.log("here1")
 						req.session.user = user
 						res.redirect('/home')
 					} else {
@@ -86,8 +85,44 @@ app.get('/sign-up', function (req, res) {
 	}
 })
 
-app.post('/sign-up', function (req, res) {
+app.post('/sign-up', async function (req, res) {
+	username = req.body.username.trim()
+	password = req.body.password
+	confirm_password = req.body.confirm_password
+	errors = {}
 
+	if (username == '') {
+		errors.username = { msg: "username cannot be blank" }
+	} else {
+		await User.findOne({ where: { username: username } }).then(user => {
+			if (user != null) {
+				username = ''
+				errors.username = { msg: "username already exists" }
+			}
+		})
+	}
+	if (password == '') {
+		errors.password = { msg: "password cannot be blank" }
+	} else {
+		if (password != confirm_password) {
+			errors.password = { msg: "passwords do not match" }
+		}
+	}
+
+	if (Object.entries(errors).length === 0) {
+		bcrypt.hash(password, 10, (err, hash) => {
+			User.create({
+				username: username,
+				password_hash: hash,
+				admin: 0
+			}).then(user => {
+				req.session.user = user.dataValues
+				res.redirect('/home')
+			})
+		});
+	} else {
+		res.render('sign-up', { errors: errors, username: username })
+	}
 })
 
 // start up the server
