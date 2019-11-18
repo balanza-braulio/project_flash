@@ -58,26 +58,70 @@ app.get('/home', function (req, res) {
 	}
 })
 
+// app.post('/login', async function (req, res) {
+// 	username = req.body.username
+// 	password = req.body.password
+// 	if (username != '' && password != '') {
+
+// 		await User.findOne({ where: { username: username } }).then(async (user) => {
+// 			if (user != null) {
+// 				user = user['dataValues']
+// 				hash = user['password_hash']
+// 				await bcrypt.compare(password, hash, (err, match) => {
+// 					if (match) {
+// 						req.session.user = user
+// 						res.redirect('/home')
+// 					} else {
+// 						res.render('login', { error: true, username: username })
+// 					}
+// 				});
+// 			} else {
+// 				res.render('login', { error: true, username: username })
+// 			}
+// 		})
+// 	} else {
+// 		res.render('login', { error: true, username: username })
+// 	}
+// })
+
+// Updated login function using consistent async calls
 app.post('/login', async function (req, res) {
+
+	// Catch variables from POST request
 	username = req.body.username
 	password = req.body.password
+
+	var user;
+
+	// Check if password is empty
 	if (username != '' && password != '') {
-		await User.findOne({ where: { username: username } }).then(async (user) => {
+		// Try to look for the user, if none found then display error
+		try {
+
+			// Query to find user
+			user = await User.findOne({ raw: true, where: { username: username } });
+
+			// If user found, check password
 			if (user != null) {
-				user = user['dataValues']
-				hash = user['password_hash']
-				await bcrypt.compare(password, hash, (err, match) => {
-					if (match) {
-						req.session.user = user
-						res.redirect('/home')
-					} else {
-						res.render('login', { error: true, username: username })
-					}
-				});
+				hash = user['password_hash'];
+
+				// Await for bcrypt promise
+				var isCorrect = await bcrypt.compare(password, hash);
+
+				// If password correct, redirect user home else, show error					
+				if (isCorrect) {
+					req.session.user = user
+					res.redirect('/home')
+				} else {
+					res.render('login', { error: true, username: username })
+				}
 			} else {
 				res.render('login', { error: true, username: username })
 			}
-		})
+		}
+		catch (e) {
+			console.log(e);
+		}
 	} else {
 		res.render('login', { error: true, username: username })
 	}
