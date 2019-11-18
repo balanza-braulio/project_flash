@@ -2,6 +2,7 @@
 const { sequelize, User, Card, CardSet } = require('./models');
 const express = require('express')
 const hbs = require('express-handlebars');
+const Handlebars = require('handlebars');
 const bodyParser = require('body-parser');
 const session = require('express-session')
 const bcrypt = require('bcrypt');
@@ -26,6 +27,34 @@ app.engine('html', hbs({
 	layoutsDir: __dirname + '/views/layouts/',
 	partialsDir: __dirname + '/views/partials/'
 }))
+
+// Handlebars helpers
+Handlebars.registerHelper("debug", function (optionalValue) {
+	console.log("Current Context");
+	console.log("====================");
+	console.log(this);
+});
+
+Handlebars.registerHelper('modThree', function (value, options) {
+	if (value % 3 == 0) {
+		return options.fn(this);
+	}
+	return options.inverse(this);
+});
+
+Handlebars.registerHelper('isZero', function (value, options) {
+	if (value === 0) {
+		return options.fn(this);
+	}
+	return options.inverse(this);
+});
+
+ Handlebars.registerHelper('notZero', function (value, options) {
+	if (value != 0) {
+		return options.fn(this);
+	}
+	return options.inverse(this);
+});
 
 // Set static directoty 
 app.use(express.static(path.join(__dirname, 'static')));
@@ -52,11 +81,19 @@ app.get('/login', function (req, res) {
 	}
 })
 
-app.get('/home', function (req, res) {
+app.get('/home', async function (req, res) {
 	if (req.session.user == null) {
 		res.redirect('/')
 	} else {
-		res.render('home', { user: req.session.user })
+
+		// Get the users card sets!
+		var cardSets = await CardSet.findAll({
+			raw: true,
+			where: { user_id: req.session.user.user_id },
+			order: [["cardSet_name", "DESC"]]
+		})
+
+		res.render('home', { user: req.session.user, cardSets: cardSets })
 	}
 })
 
@@ -210,46 +247,46 @@ app.get("/api/getUsersWithCardSets", async (req, res) => {
 
 app.get("/api/getCardSets", async (req, res) => {
 
-	try{
+	try {
 		var CardSets = await CardSet.findAll({
 			raw: true,
-			include: [{model: Card, as: "Cards"}],
+			include: [{ model: Card, as: "Cards" }],
 		});
 		res.json(CardSets);
 	}
-	catch (e){
+	catch (e) {
 		console.log(e);
 	}
- })
+})
 
- app.get("/api/getCards", async (req, res) => {
+app.get("/api/getCards", async (req, res) => {
 
-	try{
+	try {
 		var Cards = await Card.findAll({
 			raw: true,
 		});
 		res.json(Cards);
 	}
-	catch(e){
+	catch (e) {
 		console.log(e);
 	}
- });
+});
 
 //Display set page
-app.get('/cardSet/:id'), async function(req, res) {
-	try{
+app.get('/cardSet/:id'), async function (req, res) {
+	try {
 		var set = await CardSet.findByPk(req.params.id)
 
 		res.render('cardSetPage', set)
 	}
-	catch(e){
+	catch (e) {
 		console.log(e);
 	}
 }
 
 //Route to get card set json
 app.get('/cardSetJson/:id', async function (req, res) {
-	var set = await CardSet.findByPk(req.params.id,{
+	var set = await CardSet.findByPk(req.params.id, {
 		include: [{
 			model: Card,
 			as: "Cards"
