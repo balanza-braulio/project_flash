@@ -179,7 +179,7 @@ app.get('/sign-up', function (req, res) {
 //////
 
 // Get all users 
-app.get("/getUsers", async (req, res) => {
+app.get("/api/getUsers", async (req, res) => {
 
 	try {
 		var users = await User.findAll({
@@ -193,7 +193,7 @@ app.get("/getUsers", async (req, res) => {
 })
 
 // Get all users and include card sets
-app.get("/getUsersWithCardSets", async (req, res) => {
+app.get("/api/getUsersWithCardSets", async (req, res) => {
 
 	try {
 		var users = await User.findAll({
@@ -208,7 +208,7 @@ app.get("/getUsersWithCardSets", async (req, res) => {
 
 })
 
-app.get("/getCardSets", async (req, res) => {
+app.get("/api/getCardSets", async (req, res) => {
 
 	try{
 		var CardSets = await CardSet.findAll({
@@ -222,7 +222,7 @@ app.get("/getCardSets", async (req, res) => {
 	}
  })
 
- app.get("/getCards", async (req, res) => {
+ app.get("/api/getCards", async (req, res) => {
 
 	try{
 		var Cards = await Card.findAll({
@@ -248,7 +248,7 @@ app.get('/cardSet/:id'), async function(req, res) {
 }
 
 //Route to get card set json
-app.get('/cardSetJson/:id', async function (req, res) {
+app.get('/api/cardSet/:id', async function (req, res) {
 	try{
 		var set = await CardSet.findByPk(req.params.id, {
 			include: [{
