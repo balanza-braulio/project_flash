@@ -273,7 +273,7 @@ app.get("/api/getCards", async (req, res) => {
 });
 
 //Display set page
-app.get('/cardSet/:id'), async function (req, res) {
+app.get('/cardSet/:id', async function (req, res) {
 	try {
 		var set = await CardSet.findByPk(req.params.id)
 
@@ -282,7 +282,7 @@ app.get('/cardSet/:id'), async function (req, res) {
 	catch (e) {
 		console.log(e);
 	}
-}
+})
 
 //Route to get card set json
 app.get('/cardSetJson/:id', async function (req, res) {
