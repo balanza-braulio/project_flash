@@ -2,15 +2,32 @@
 
 <div id="myCarousel" class="carousel slide" data-ride="carousel">
 
-    <div id="CarouselContent"></div>    
+    <div id="CarouselContent"
+    
+    ></div>
 
-        <!-- Carousel controls -->
-        <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-        </a>
-        <a class="carousel-control-next" href="#myCarousel" data-slide="next">
-            <span class="carousel-control-next-icon"></span>
-        </a>
-    </div>
+    <!-- Carousel controls -->
+    <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </a>
+    <a class="carousel-control-next" href="#myCarousel" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </a>
+</div>
 
 <script src="/js/views/cards.js"></script>
+
+<div class="carousel-inner" id="template" hidden>
+    <div class="carousel-item">
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <h1 id="front"></h1>
+                </div>
+                <div class="flip-card-back">
+                    <h1 id="back"></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -275,7 +275,7 @@ app.get("/api/getCards", async (req, res) => {
 //Display set page
 app.get('/cardSet/:id', async function (req, res) {
 	try {
-		var set = await CardSet.findByPk(req.params.id)
+		var set = await CardSet.findByPk(req.params.id, {raw:true})
 
 		res.render('cardSetPage', set)
 	}
@@ -285,7 +285,7 @@ app.get('/cardSet/:id', async function (req, res) {
 })
 
 //Route to get card set json
-app.get('/cardSetJson/:id', async function (req, res) {
+app.get('/api/cardSet/:id', async function (req, res) {
 	var set = await CardSet.findByPk(req.params.id, {
 		include: [{
 			model: Card,
