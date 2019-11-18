@@ -160,15 +160,6 @@ app.post('/login', async function (req, res) {
 	}
 })
 
-app.get('/getUsers', async (req, res) => {
-
-	var users = await User.findAll({
-		raw: true,
-		// include: [{ model: CardSet, as: "CardSets" }]
-	})
-	res.json(users);
-
-})
 
 app.get('/logout', function (req, res) {
 	req.session.user = null
@@ -182,6 +173,67 @@ app.get('/sign-up', function (req, res) {
 		res.render('sign-up')
 	}
 })
+
+///////
+// SQL queries, send data as response
+//////
+
+// Get all users 
+app.get("/getUsers", async (req, res) => {
+
+	try {
+		var users = await User.findAll({
+			raw: true,
+		})
+		res.json(users);
+	}
+	catch (e) {
+		console.log(e);
+	}
+})
+
+// Get all users and include card sets
+app.get("/getUsersWithCardSets", async (req, res) => {
+
+	try {
+		var users = await User.findAll({
+			raw: true,
+			include: [{ model: CardSet, as: "CardSets" }]
+		})
+		res.json(users);
+	}
+	catch (e) {
+		console.log(e);
+	}
+
+})
+
+app.get("/getCardSets", async (req, res) => {
+
+	try{
+		var CardSets = await CardSet.findAll({
+			raw: true,
+			include: [{model: Card, as: "Cards"}],
+		});
+		res.json(CardSets);
+	}
+	catch (e){
+		console.log(e);
+	}
+ })
+
+ app.get("/getCards", async (req, res) => {
+
+	try{
+		var Cards = await Card.findAll({
+			raw: true,
+		});
+		res.json(Cards);
+	}
+	catch(e){
+		console.log(e);
+	}
+ });
 
 
 
