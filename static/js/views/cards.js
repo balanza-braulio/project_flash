@@ -17,9 +17,9 @@ $(document).ready(async function() {
         temp[0].removeAttribute("id")
 
         if(i == 0) {
-            temp.find(".carousel-item").attr("class", "carousel-item active")
+            temp.attr("class", "carousel-item active")
         }
         
-        $("#CarouselContent").append(temp)
+        $(".carousel-inner").append(temp)
     }
 })
