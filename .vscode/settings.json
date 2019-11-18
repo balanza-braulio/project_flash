@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "database": "${workspaceFolder}/flash.sqlite",
+            "dialect": "SQLite",
+            "name": "lol"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}

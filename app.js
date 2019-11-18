@@ -1,5 +1,5 @@
 // Libraries and dependencies
-const { User } = require('./models');
+const { sequelize, User, Card, Card_Set } = require('./models');
 const express = require('express')
 const hbs = require('express-handlebars');
 const bodyParser = require('body-parser');

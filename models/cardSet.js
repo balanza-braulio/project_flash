@@ -1,28 +1,27 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('users', {
-    user_id: {
+  return sequelize.define('cardSet', {
+    cardSet_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    username: {
+    cardSet_name: {
       type: DataTypes.TEXT,
       allowNull: false
     },
-    password_hash: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
-    admin: {
+    user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: '0'
+      references: {
+        model: 'users',
+        key: 'user_id'
+      }
     }
   }, {
-    tableName: 'users',
+    tableName: 'cardSet',
     timestamps: false,
   });
 };
