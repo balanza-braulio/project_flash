@@ -32,24 +32,45 @@ app.use(express.static(path.join(__dirname, 'static')));
 
 async function main() {
 
-	var temp = await User.findAll();
-	temp.forEach(async user => {
-		try{
-			var tempCard = await CardSet.create({
-			cardSet_name: "test",
-			user_id: user.user_id,
-		});
-		}
-		catch (e){
-			console.log(e);
-		}
+	// var temp = await User.findAll();
+	// temp.forEach(async user => {
+	// 	try{
+	// 		var tempCard = await CardSet.create({
+	// 		cardSet_name: "test",
+	// 		user_id: user.user_id,
+	// 	});
+	// 	}
+	// 	catch (e){
+	// 		console.log(e);
+	// 	}
 		
 		
-		var userWithCardSet =  await User.findAll({
-			include: [{model: CardSet, as: "CardSets"}],
+	// 	var userWithCardSet =  await User.findAll({
+	// 		include: [{model: CardSet, as: "CardSets"}],
+	// 	});
+	// 	console.log(userWithCardSet);
+	// });
+	try{
+		var temp = await CardSet.findAll({raw: true});
+
+		CardSet.create({
+			cardSet_name: "test2",
+			cardSet_description: "Lorem Ipsum",
+			user_id: 14
 		});
-		console.log(userWithCardSet);
-	});
+		temp.forEach(element => {
+			
+			Card.create({
+				card_front: "Front Test",  
+				  card_back: "Back Test",
+				  cardSet_id: element.cardSet_id,
+			});
+
+		});
+	}
+	catch(e){
+		console.log(e);
+	}
 	
 }
 main();
