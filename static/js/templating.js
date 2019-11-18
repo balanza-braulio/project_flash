@@ -1,11 +1,12 @@
 var jqueryNoConflict = jQuery;
 
-//begin main function
+// This is the function to inject a handlebars template through ajax, all you
+// need is the template path, the css selecter you want to inject the template into
+// and the route you want to retrieve your data from
+// example: retriveData("/templates/test.handlebars", "#test", '/getUsers');
+
 // jqueryNoConflict(document).ready(function () {
-    // This is the function to inject a handlebars template through ajax, all you
-    // need is the template path, the css selecter you want to inject the template into
-    // and the route you want to retrieve your data from
-    // example = retriveData("/templates/test.handlebars", "#test", '/getUsers');
+//     retriveData("/templates/test.handlebars", "#test", '/getUsers');
 // });
 
 // Grab data
@@ -17,7 +18,7 @@ function retriveData(template, selector, source) {
             dataType: "json",
             url: source,
             success: objects => {
-                var objects = {objects};
+                var objects = { objects };
                 renderData(template, selector, objects);
             },
         });;
