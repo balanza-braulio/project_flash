@@ -51,6 +51,7 @@ function renderHandlebarsTemplate(withTemplate, inElement, withData) {
 // Render compiled handlebars template
 function renderData(template, selector, data) {
     handlebarsDebugHelper();
+    handleBarsIsZeroIsZero();
     renderHandlebarsTemplate(template, selector, data);
 };
 
@@ -62,3 +63,12 @@ function handlebarsDebugHelper() {
         console.log(this);
     });
 };
+
+function handleBarsIsZeroIsZero(){
+    Handlebars.registerHelper('isZero', function (value, options) {
+	if (value === 0) {
+		return options.fn(this);
+	}
+	return options.inverse(this);
+});
+}
