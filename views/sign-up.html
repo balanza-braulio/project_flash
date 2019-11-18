@@ -20,9 +20,9 @@
                         <input type="text" name="username" class="form-control input_user" placeholder="username" value={{username}}>
                     </div>
                     {{#if errors.password}}
-                    <div>
-                        <span class="error-text">{{errors.password.msg}}</span>
-                    </div>
+                    <div class="alert-danger p-2 mb-2">
+                        {{this}}
+                    </div> 
                     {{/if}}
                     <div class="input-group mb-3">
                         <div class="input-group-append">
