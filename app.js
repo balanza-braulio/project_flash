@@ -174,6 +174,7 @@ app.get('/sign-up', function (req, res) {
 	}
 })
 
+<<<<<<< HEAD
 ///////
 // SQL queries, send data as response
 //////
@@ -235,7 +236,26 @@ app.get("/getCardSets", async (req, res) => {
 	}
  });
 
+=======
+//Display set page
+app.get('/cardSet/:id'), async function(req, res) {
+	var set = await CardSet.findByPk(req.params.id)
 
+	res.render('cardSetPage', set)
+}
+
+//Route to get card set json
+app.get('/cardSetJson/:id', async function (req, res) {
+	var set = await CardSet.findByPk(req.params.id,{
+		include: [{
+			model: Card,
+			as: "Cards"
+		}]
+	})
+>>>>>>> Added routes
+
+	res.json(set)
+})
 
 // start up the server
 var server = app.listen(app.get('port'), function () {

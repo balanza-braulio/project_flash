@@ -12,6 +12,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.TEXT,
       allowNull: false
     },
+    card_back: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
     cardSet_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
