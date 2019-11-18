@@ -1,5 +1,5 @@
 // Libraries and dependencies
-const { sequelize, User, Card, Card_Set } = require('./models');
+const { sequelize, User, Card, CardSet } = require('./models');
 const express = require('express')
 const hbs = require('express-handlebars');
 const bodyParser = require('body-parser');
@@ -10,6 +10,8 @@ const path = require('path')
 // Initialize Express
 app = express()
 app.set('port', 3002)
+
+// Initialize body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -156,6 +158,16 @@ app.post('/login', async function (req, res) {
 	} else {
 		res.render('login', { error: true, username: username })
 	}
+})
+
+app.get('/getUsers', async (req, res) => {
+
+	var users = await User.findAll({
+		raw: true,
+		// include: [{ model: CardSet, as: "CardSets" }]
+	})
+	res.json(users);
+
 })
 
 app.get('/logout', function (req, res) {

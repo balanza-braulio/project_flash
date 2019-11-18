@@ -1,95 +1,130 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="/main.css">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat|Satisfy&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/main.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat|Satisfy&display=swap"
+      rel="stylesheet"
+    />
     <title>Flash</title>
     <link rel="shortcut icon" type="image/x-icon" href="/logo.png" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.2/css/all.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.2/css/v4-shims.css">
-    
-</head>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.10.2/css/all.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.10.2/css/v4-shims.css"
+    />
+  </head>
 
-<body>
+  <body>
     <nav id="navbar" class="navbar navbar-expand-lg bg-secondary fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="/logo.png" width="50" height="50" class="d-inline-block align-top" alt="">
-                <span id="navbar-title">Flash</span>
-            </a>
+      <div class="container">
+        <a class="navbar-brand" href="/">
+          <img
+            src="/logo.png"
+            width="50"
+            height="50"
+            class="d-inline-block align-top"
+            alt=""
+          />
+          <span id="navbar-title">Flash</span>
+        </a>
 
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                {{#if user}}
-                <div class="navbar-nav ml-auto">
-                    <div class="nav-item mx-0 mx-lg-1">
-                        <a class="btn btn-outline-danger" href="/sign-up"><span class='nav-button'>My
-                                Flash</span></a>
-                    </div>
-                    <div class="nav-item mx-0 mx-lg-1">
-                        <a class="btn btn-outline-danger" href="/sign-up"><span class='nav-button'>Create
-                                Flash</span></a>
-                    </div>
-                    <div class="nav-item mx-0 mx-lg-1">
-                        <a class="btn btn-outline-danger" href="/logout"><span class='nav-button'>Log Out</span></a>
-                    </div>
-                </div>
-                {{else}}
-                <div class="navbar-nav ml-auto">
-                    <div class="nav-item mx-0 mx-lg-1">
-                        <a id="nav-button" class="btn btn-outline-danger" href="/login"><span class='nav-button'>Log
-                                In</span></a>
-                    </div>
-                    <div class="nav-item mx-0 mx-lg-1">
-                        <a id="nav-button" class="btn btn-outline-danger" href="/sign-up"><span class='nav-button'>Sign
-                                Up</span></a>
-                    </div>
-
-                </div>
-                {{/if}}
-                <form class="form-inline">
-                    <input id="search-box" class="form-control mr-sm-2" type="search" placeholder="Search"
-                        aria-label="Search">
-                    <button class="btn btn-outline-danger my-2 my-sm-0" type="submit"><span
-                            class="nav-button">Search</span></button>
-                </form>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          {{#if user}}
+          <div class="navbar-nav ml-auto">
+            <div class="nav-item mx-0 mx-lg-1">
+              <a class="btn btn-outline-danger" href="/sign-up"
+                ><span class="nav-button">My Flash</span></a
+              >
             </div>
-
+            <div class="nav-item mx-0 mx-lg-1">
+              <a class="btn btn-outline-danger" href="/sign-up"
+                ><span class="nav-button">Create Flash</span></a
+              >
+            </div>
+            <div class="nav-item mx-0 mx-lg-1">
+              <a class="btn btn-outline-danger" href="/logout"
+                ><span class="nav-button">Log Out</span></a
+              >
+            </div>
+          </div>
+          {{else}}
+          <div class="navbar-nav ml-auto">
+            <div class="nav-item mx-0 mx-lg-1">
+              <a id="nav-button" class="btn btn-outline-danger" href="/login"
+                ><span class="nav-button">Log In</span></a
+              >
+            </div>
+            <div class="nav-item mx-0 mx-lg-1">
+              <a id="nav-button" class="btn btn-outline-danger" href="/sign-up"
+                ><span class="nav-button">Sign Up</span></a
+              >
+            </div>
+          </div>
+          {{/if}}
+          <form class="form-inline">
+            <input
+              id="search-box"
+              class="form-control mr-sm-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
+            <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">
+              <span class="nav-button">Search</span>
+            </button>
+          </form>
         </div>
+      </div>
     </nav>
     <div id="content" class="Container">
-        {{{body}}}
+      {{{body}}}
     </div>
     <!-- Footer -->
     <div class="footer">
-
-        <!-- Copyright Section -->
-        <section class="copyright py-4 text-center text-white">
-            <div class="container">
-                <small>Copyright &copy; flash.com 2019</small>
-            </div>
-        </section>
+      <!-- Copyright Section -->
+      <section class="copyright py-4 text-center text-white">
+        <div class="container">
+          <small>Copyright &copy; flash.com 2019</small>
+        </div>
+      </section>
     </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.4.1.js"
-    integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-    crossorigin="anonymous"></script> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
-    <script src="/templating.js"></script>
-</body>
-
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.js"
+      integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/js/handlebars.js"></script>
+    <script src="/js/templating.js"></script>
+  </body>
 </html>
