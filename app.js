@@ -248,20 +248,15 @@ app.get('/cardSet/:id'), async function(req, res) {
 }
 
 //Route to get card set json
-app.get('/api/cardSet/:id', async function (req, res) {
-	try{
-		var set = await CardSet.findByPk(req.params.id, {
-			include: [{
-				model: Card,
-				as: "Cards"
-			}]
-		})
+app.get('/cardSetJson/:id', async function (req, res) {
+	var set = await CardSet.findByPk(req.params.id,{
+		include: [{
+			model: Card,
+			as: "Cards"
+		}]
+	})
 
-		res.json(set)
-	}
-	catch(e) {
-		console.log(e)
-	}
+	res.json(set)
 })
 
 // start up the server
