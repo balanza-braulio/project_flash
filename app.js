@@ -86,7 +86,7 @@ app.post('/sign-up', async function (req, res) {
 		}
 	}
 	if (password == '') {
-		errors.push("password cannot be blank");
+		errors.push("Error: password cannot be blank");
 	} else {
 		if (password != confirm_password) {
 			errors.push("Error: passwords do not match!");
