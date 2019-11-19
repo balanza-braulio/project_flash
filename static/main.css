@@ -45,6 +45,9 @@ body{
     color: #c0392b;
     text-align: center;
 }
+#create-flash-div{
+    background-color: white;
+}
 
 .user_card {
     height: 400px;

@@ -211,6 +211,14 @@ app.get('/sign-up', function (req, res) {
 	}
 })
 
+app.get('/create-flash', function(req, res){
+	if (req.session.user == null) {
+		res.redirect('/')
+	} else {
+		res.render('create-flash', {user:req.session.user})
+	}
+})
+
 ///////
 // SQL queries, send data as response
 //////
