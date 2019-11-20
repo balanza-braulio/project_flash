@@ -211,8 +211,16 @@ app.get('/sign-up', function (req, res) {
 	}
 })
 
+app.get('/create-flash', function(req, res){
+	if (req.session.user == null) {
+		res.redirect('/')
+	} else {
+		res.render('create-flash', {user:req.session.user})
+	}
+})
+
 ///////
-// SQL queries, send data as response
+// SQL queries, send JSON as response
 //////
 
 // Get all users 
@@ -245,6 +253,8 @@ app.get("/api/getUsersWithCardSets", async (req, res) => {
 
 })
 
+
+// Gets all cardsets
 app.get("/api/getCardSets", async (req, res) => {
 
 	try {
@@ -259,6 +269,7 @@ app.get("/api/getCardSets", async (req, res) => {
 	}
 })
 
+// Gets all cards
 app.get("/api/getCards", async (req, res) => {
 
 	try {
