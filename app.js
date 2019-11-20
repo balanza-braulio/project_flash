@@ -301,6 +301,10 @@ app.get('/api/cardSet/:id', async function (req, res) {
 		include: [{
 			model: Card,
 			as: "Cards"
+		},
+		{
+			model: User,
+			attributes: ["username"]
 		}]
 	})
 
