@@ -212,6 +212,6 @@ body{
     transform: rotateY(180deg);
   }
 
-  #card-set-view-flashcard {
-      
+  #flash-view, #list-view {
+      margin-bottom: 40px;
   }
