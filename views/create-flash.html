@@ -1,3 +1,34 @@
-<div class="container" id="create-flash-div">
-    <h3>Create Flash</h3>
+<div class="container">
+    <div class="form-group col-md-6">
+        <input type="email" class="form-control" id="title" placeholder="Subject, Chapter, Unit">
+        <label id="title-label" for="exampleFormControlInput1">TITLE</label>
+    </div>
+    <div class="container" id="create-flash-content">
+        <div class='container'>
+            <div id="flashcards" class="col">
+                <div id="flashcard-template" class="row">
+                    <span class='index'>1.</span>
+                    <div class="def-term">
+                        <textarea class="flash-input term-input" placeholder="Term"></textarea>
+                        <textarea class="flash-input def-input" placeholder="Definition"></textarea>
+                    </div>
+                    <i class="fas fa-trash-alt delete-flash"></i>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <a id="add-flash" class="btn btn-warning btn-lg" role="button"><span
+                            class="nav-button" id="add-flash-text">ADD FLASH</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <a id="create" class="btn btn-danger btn-lg" role="button"><span
+                    class="nav-button">Create</span></a>
+        </div>
+    </div>
 </div>
+
+<script src="/js/create-flash.js"></script>
