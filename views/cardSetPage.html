@@ -1,4 +1,7 @@
+
 <h3 id="set" value="{{cardSet_id}}">{{cardSet_name}}</h3>
+
+<div class="jumbotron" id="card-set-view-flashcard">
 
 <div id="myCarousel" class="carousel slide" data-ride="carousel">
 
@@ -13,18 +16,20 @@
         <span class="carousel-control-next-icon"></span>
     </a>
 </div>
-
+</div>
 <script src="/js/views/cards.js"></script>
 
-    <div class="carousel-item" id="template" hidden>
-        <div class="flip-card">
-            <div class="flip-card-inner">
-                <div class="flip-card-front">
-                    <h1 id="front"></h1>
-                </div>
-                <div class="flip-card-back">
-                    <h1 id="back"></h1>
-                </div>
+<!-- Template -->
+
+<div class="carousel-item" id="template" hidden>
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <h1 id="front"></h1>
+            </div>
+            <div class="flip-card-back">
+                <h1 id="back"></h1>
             </div>
         </div>
     </div>
+</div>
