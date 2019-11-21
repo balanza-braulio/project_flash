@@ -15,24 +15,67 @@ $('#add-flash').on('click', () => {
 })
 
 $(document.body).on("click", ".delete-flash", function () {
-    if(flashCount == 2){
+    if (flashCount == 2) {
         return
     }
 
     flashCount -= 1
     $(this).closest("#flashcard-template").remove()
     $('span.index').each(function (index) {
-        $(this).text((index+1)+'.')
+        $(this).text((index + 1) + '.')
     });
 })
 
 $('#create').on('click', () => {
-    console.log($('#title').val())
+    title = $('#title').val().trim()
+    description = $('#description').val().trim()
+    terms = []
+    defs = []
+    flashcards = []
+
+    if (title == '') {
+        $('#title').css({
+            'border-color': '#c0392b',
+            'border-width': '3px'
+        })
+        return
+    }
+
     $('textarea.term-input').each(function (index) {
-        console.log($(this).val())
+        terms.push($(this).val())
     });
 
     $('textarea.def-input').each(function (index) {
-        console.log($(this).val())
+        defs.push($(this).val())
     });
+
+    for (i = 0; i < terms.length; i++) {
+        term = terms[i].trim()
+        def = defs[i].trim()
+        if (term != '' && def != '') {
+            flashcards.push({
+                term: term,
+                definition: def,
+            })
+        }
+    }
+
+    if (flashcards.length < 2) {
+        return
+    }
+
+    payload = {
+        title: title,
+        description: description,
+        flashcards: flashcards
+    }
+
+    $.ajax({
+        url: '/create-flash',
+        method: "POST",
+        data: payload,
+    }).then((id) => {
+        window.location.replace("/home");
+    });
+
 })

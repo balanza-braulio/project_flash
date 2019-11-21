@@ -65,11 +65,16 @@ app.use(express.static(path.join(__dirname, 'static')));
 //////////////
 
 // Default route
-app.get('/', function (req, res) {
+app.get('/', async function (req, res) {
 	if (req.session.user == null) {
 		res.render('welcome')
 	} else {
-		res.render('home', { user: req.session.user })
+		var cardSets = await CardSet.findAll({
+			raw: true,
+			where: { user_id: req.session.user.user_id },
+			order: [["cardSet_name", "DESC"]]
+		})
+		res.render('home', {user:req.session.user, cardSets: cardSets})
 	}
 })
 
@@ -217,6 +222,28 @@ app.get('/create-flash', function(req, res){
 	} else {
 		res.render('create-flash', {user:req.session.user})
 	}
+})
+
+app.post('/create-flash', async function(req,res){
+	var cardSet = await CardSet.create({
+		cardSet_name: req.body.title,
+		cardSet_description: req.body.description,
+		user_id: req.session.user.user_id
+	})
+
+	id = cardSet.dataValues.cardSet_id
+	cards = []
+
+	req.body.flashcards.forEach(flashcard=>{
+		card = {
+			card_front:flashcard.term,
+			card_back:flashcard.definition,
+			cardSet_id:id
+		}
+		cards.push(card)
+	})
+	await Card.bulkCreate(cards)
+	res.sendStatus(200)
 })
 
 ///////
