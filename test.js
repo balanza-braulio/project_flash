@@ -1,7 +1,7 @@
 ////// Test file to check if associations work
 
 // Libraries and dependencies
-const { sequelize, User, Card, CardSet } = require('./models');
+const { sequelize, User, Card, CardSet, Liked } = require('./models');
 const express = require('express')
 const hbs = require('express-handlebars');
 const bodyParser = require('body-parser');
@@ -32,45 +32,34 @@ app.use(express.static(path.join(__dirname, 'static')));
 
 async function main() {
 
-	// var temp = await User.findAll();
-	// temp.forEach(async user => {
-	// 	try{
-	// 		var tempCard = await CardSet.create({
-	// 		cardSet_name: "test",
-	// 		user_id: user.user_id,
-	// 	});
-	// 	}
-	// 	catch (e){
-	// 		console.log(e);
-	// 	}
-		
-		
-	// 	var userWithCardSet =  await User.findAll({
-	// 		include: [{model: CardSet, as: "CardSets"}],
-	// 	});
-	// 	console.log(userWithCardSet);
-	// });
-	try{
-		var temp = await CardSet.findAll({raw: true});
-
-		CardSet.create({
-			cardSet_name: "test2",
-			cardSet_description: "Lorem Ipsum",
-			user_id: 14
+	try {
+		const allLiked = await CardSet.findAll({
+			raw: true,
+			as: 'CardSets',
+			include: [{
+				model: User,
+				as: 'Users',
+				required: false,
+				through: {
+					model: Liked,
+				}
+			}],
 		});
-		temp.forEach(element => {
-			
-			Card.create({
-				card_front: "Front Test",  
-				  card_back: "Back Test",
-				  cardSet_id: element.cardSet_id,
-			});
-
+		const likes = await Liked.findAll({ raw: true });
+		var usersWithLikedCardSets = await User.findByPk(14, {
+			as: 'Users',
+			include: [{
+				model: CardSet,
+				as: "LikedCardSets",
+				through: {
+					model: Liked,
+				}
+			}],
 		});
+		console.log(usersWithLikedCardSets);
 	}
-	catch(e){
+	catch (e) {
 		console.log(e);
 	}
-	
 }
 main();

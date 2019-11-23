@@ -23,13 +23,25 @@ const sequelize = new Sequelize({
 const User = sequelize.import("./users.js");
 const Card = sequelize.import("./card.js");
 const CardSet = sequelize.import("./cardSet.js");
+const Liked = sequelize.import("./liked.js");
 
 // Create assosiations
 User.hasMany(CardSet,{foreignKey: "user_id", as: "CardSets"});
 CardSet.belongsTo(User, {foreignKey: "user_id"});
 CardSet.hasMany(Card, {foreignKey: "cardSet_id", as: "Cards"});
 Card.belongsTo(CardSet, {foreignKey: "cardSet_id"});
-
+User.belongsToMany(CardSet, {
+  through: 'liked',
+  as: 'LikedCardSets',
+  foreignKey: 'user_id',
+  otherKey: 'cardSet_id'
+});
+CardSet.belongsToMany(User, {
+  through: 'liked',
+  as: 'Users',
+  foreignKey: 'cardSet_id',
+  otherKey: 'user_id'
+});
 module.exports = {
 
   // Export instance of sequelize for transactions
@@ -38,6 +50,7 @@ module.exports = {
   // Export Models
   User,
   Card,
-  CardSet
+  CardSet,
+  Liked
 };
 

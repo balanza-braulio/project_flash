@@ -1,5 +1,5 @@
 // Libraries and dependencies
-const { sequelize, User, Card, CardSet } = require("./models");
+const { sequelize, User, Card, CardSet, Liked } = require("./models");
 const express = require("express");
 const hbs = require("express-handlebars");
 const Handlebars = require("handlebars");
@@ -89,18 +89,35 @@ app.get("/login", function (req, res) {
 });
 
 app.get("/home", async function (req, res) {
-	// req.session.user = await User.findByPk(14, { raw: true });
+	req.session.user = await User.findByPk(14, { raw: true });
 	if (req.session.user == null) {
 		res.redirect("/");
 	} else {
-		// Get the users card sets!
-		var cardSets = await CardSet.findAll({
-			raw: true,
-			where: { user_id: req.session.user.user_id },
-			order: [["cardSet_name", "DESC"]]
-		});
+		try {
+			// Get the users card sets!
+			var cardSets = await CardSet.findAll({
+				raw: true,
+				where: { user_id: req.session.user.user_id },
+				order: [["cardSet_name", "DESC"]]
+			});
+			const userWithLikedCardSets = await User.findByPk(req.session.user.user_id,{
+				attributes: {},
+				include: [{
+					model: CardSet,
+					as: "LikedCardSets",
+					through: {
+						model: Liked,
+					}
+				}],
+			});
 
-		res.render("home", { user: req.session.user, cardSets: cardSets });
+			var likedCardSets = userWithLikedCardSets.LikedCardSets;
+			res.render("home", { user: req.session.user, cardSets: cardSets, likedCardSets: likedCardSets});
+		}
+		catch (e) {
+			console.log(e);
+		}
+
 	}
 });
 
@@ -255,7 +272,6 @@ app.get("/cardSet/:id", async function (req, res) {
 });
 
 app.get("/deleteCardSet/:id", async function (req, res) {
-	var doc = "lol";
 	try {
 		t = await sequelize.transaction();
 		var cardSet = await CardSet.findByPk(req.params.id, { transaction: t });
