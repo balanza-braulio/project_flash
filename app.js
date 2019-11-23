@@ -260,8 +260,8 @@ app.get("/deleteCardSet/:id", async function (req, res) {
 		t = await sequelize.transaction();
 		var cardSet = await CardSet.findByPk(req.params.id, { transaction: t });
 		await cardSet.destroy({ transaction: t });
-		// await t.commit();
-		await t.rollback();
+		await t.commit();
+		// await t.rollback();
 		return res.status(200).send();
 
 	} catch (e) {

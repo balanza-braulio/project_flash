@@ -14,7 +14,7 @@ $(document.body).on("click", ".btn-danger", async function () {
             method: "GET",
             success: (res, status) => {
                 
-                toDel.fadeOut(500, function () {
+                toDel.slideUp(600, function () {
                     toDel
                         .remove();
                 });
