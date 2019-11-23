@@ -1,32 +1,35 @@
 // Libraries and dependencies
-const { sequelize, User, Card, CardSet } = require('./models');
-const express = require('express')
-const hbs = require('express-handlebars');
-const Handlebars = require('handlebars');
-const bodyParser = require('body-parser');
-const session = require('express-session')
-const bcrypt = require('bcrypt');
-const path = require('path')
+const { sequelize, User, Card, CardSet } = require("./models");
+const express = require("express");
+const hbs = require("express-handlebars");
+const Handlebars = require("handlebars");
+const bodyParser = require("body-parser");
+const session = require("express-session");
+const bcrypt = require("bcrypt");
+const path = require("path");
 
 // Initialize Express
-app = express()
-app.set('port', 3002)
+app = express();
+app.set("port", 3002);
 
 // Initialize body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Initialize Express Session 
+// Initialize Express Session
 app.use(session({ secret: "Shh, its a secret!" }));
 
 //Handlebars Middleware
-app.set('view engine', 'html');
-app.engine('html', hbs({
-	extname: 'html',
-	defaultView: 'default',
-	layoutsDir: __dirname + '/views/layouts/',
-	partialsDir: __dirname + '/views/partials/'
-}))
+app.set("view engine", "html");
+app.engine(
+	"html",
+	hbs({
+		extname: "html",
+		defaultView: "default",
+		layoutsDir: __dirname + "/views/layouts/",
+		partialsDir: __dirname + "/views/partials/"
+	})
+);
 
 // Handlebars helpers
 Handlebars.registerHelper("debug", function (optionalValue) {
@@ -35,101 +38,101 @@ Handlebars.registerHelper("debug", function (optionalValue) {
 	console.log(this);
 });
 
-Handlebars.registerHelper('modThree', function (value, options) {
+Handlebars.registerHelper("modThree", function (value, options) {
 	if (value % 3 == 0) {
 		return options.fn(this);
 	}
 	return options.inverse(this);
 });
 
-Handlebars.registerHelper('isZero', function (value, options) {
+Handlebars.registerHelper("isZero", function (value, options) {
 	if (value === 0) {
 		return options.fn(this);
 	}
 	return options.inverse(this);
 });
 
- Handlebars.registerHelper('notZero', function (value, options) {
+Handlebars.registerHelper("notZero", function (value, options) {
 	if (value != 0) {
 		return options.fn(this);
 	}
 	return options.inverse(this);
 });
 
-// Set static directoty 
-app.use(express.static(path.join(__dirname, 'static')));
-
+// Set static directoty
+app.use(express.static(path.join(__dirname, "static")));
 
 //////////////
 // Routes
 //////////////
 
 // Default route
-app.get('/', async function (req, res) {
+app.get("/", async function (req, res) {
 	if (req.session.user == null) {
-		res.render('welcome')
+		res.render("welcome");
 	} else {
 		var cardSets = await CardSet.findAll({
 			raw: true,
 			where: { user_id: req.session.user.user_id },
 			order: [["cardSet_name", "DESC"]]
-		})
-		res.render('home', {user:req.session.user, cardSets: cardSets})
+		});
+		res.render("home", { user: req.session.user, cardSets: cardSets });
 	}
-})
+});
 
-app.get('/login', function (req, res) {
+app.get("/login", function (req, res) {
 	if (req.session.user != null) {
-		res.redirect('/')
+		res.redirect("/");
 	} else {
-		res.render('login')
+		res.render("login");
 	}
-})
+});
 
-app.get('/home', async function (req, res) {
+app.get("/home", async function (req, res) {
+	// req.session.user = await User.findByPk(14, { raw: true });
 	if (req.session.user == null) {
-		res.redirect('/')
+		res.redirect("/");
 	} else {
-
 		// Get the users card sets!
 		var cardSets = await CardSet.findAll({
 			raw: true,
 			where: { user_id: req.session.user.user_id },
 			order: [["cardSet_name", "DESC"]]
-		})
+		});
 
-		res.render('home', { user: req.session.user, cardSets: cardSets })
+		res.render("home", { user: req.session.user, cardSets: cardSets });
 	}
-})
+});
 
 // Register function that uses true async methods
-app.post('/sign-up', async function (req, res) {
-
+app.post("/sign-up", async function (req, res) {
 	// Catch username and password and confirm password
-	username = req.body.username.trim()
-	password = req.body.password
-	confirm_password = req.body.confirm_password
+	username = req.body.username.trim();
+	password = req.body.password;
+	confirm_password = req.body.confirm_password;
 
 	// Dictionary to log errors
 	errors = [];
 
-	if (username == '') {
+	if (username == "") {
 		errors.push("Error: Username cannot be blank!");
 	} else {
 		// Query to check if the user already exists
 		try {
-			var user = await User.findOne({ raw: true, where: { username: username } });
-		}
-		catch (e) {
+			var user = await User.findOne({
+				raw: true,
+				where: { username: username }
+			});
+		} catch (e) {
 			console.log(e);
 		}
 
 		if (user != null) {
-			username = ''
+			username = "";
 			errors.push("Error: username already exists");
 		}
 	}
-	if (password == '') {
+	if (password == "") {
 		errors.push("Error: password cannot be blank");
 	} else {
 		if (password != confirm_password) {
@@ -140,208 +143,208 @@ app.post('/sign-up', async function (req, res) {
 	if (errors.length === 0) {
 		var password_hash = await bcrypt.hash(password, 10);
 		try {
-
 			var user = await User.create({
 				username: username,
 				password_hash: password_hash,
 				admin: 0
-			})
+			});
 
-			req.session.user = user.dataValues
-			res.redirect('/home')
-
-		}
-		catch (e) {
+			req.session.user = user.dataValues;
+			res.redirect("/home");
+		} catch (e) {
 			console.log(e);
 		}
 	} else {
-		res.render('sign-up', { errors: errors, username: username })
+		res.render("sign-up", { errors: errors, username: username });
 	}
-})
+});
 
 // Updated login function using consistent async calls
-app.post('/login', async function (req, res) {
-
+app.post("/login", async function (req, res) {
 	// Catch variables from POST request
-	username = req.body.username
-	password = req.body.password
+	username = req.body.username;
+	password = req.body.password;
 
 	var user;
 
 	// Check if password is empty
-	if (username != '' && password != '') {
+	if (username != "" && password != "") {
 		// Try to look for the user, if none found then display error
 		try {
-
 			// Query to find user
 			user = await User.findOne({ raw: true, where: { username: username } });
 
 			// If user found, check password
 			if (user != null) {
-				hash = user['password_hash'];
+				hash = user["password_hash"];
 
 				// Await for bcrypt promise
 				var isCorrect = await bcrypt.compare(password, hash);
 
-				// If password correct, redirect user home else, show error					
+				// If password correct, redirect user home else, show error
 				if (isCorrect) {
-					req.session.user = user
-					res.redirect('/home')
+					req.session.user = user;
+					res.redirect("/home");
 				} else {
-					res.render('login', { error: true, username: username })
+					res.render("login", { error: true, username: username });
 				}
 			} else {
-				res.render('login', { error: true, username: username })
+				res.render("login", { error: true, username: username });
 			}
-		}
-		catch (e) {
+		} catch (e) {
 			console.log(e);
 		}
 	} else {
-		res.render('login', { error: true, username: username })
+		res.render("login", { error: true, username: username });
 	}
-})
+});
 
+app.get("/logout", function (req, res) {
+	req.session.user = null;
+	res.redirect("/");
+});
 
-app.get('/logout', function (req, res) {
-	req.session.user = null
-	res.redirect('/')
-})
-
-app.get('/sign-up', function (req, res) {
+app.get("/sign-up", function (req, res) {
 	if (req.session.user != null) {
-		res.redirect('/')
+		res.redirect("/");
 	} else {
-		res.render('sign-up')
+		res.render("sign-up");
 	}
-})
+});
 
-app.get('/create-flash', function(req, res){
+app.get("/create-flash", function (req, res) {
 	if (req.session.user == null) {
-		res.redirect('/')
+		res.redirect("/");
 	} else {
-		res.render('create-flash', {user:req.session.user})
+		res.render("create-flash", { user: req.session.user });
 	}
-})
+});
 
-app.post('/create-flash', async function(req,res){
+app.post("/create-flash", async function (req, res) {
 	var cardSet = await CardSet.create({
 		cardSet_name: req.body.title,
 		cardSet_description: req.body.description,
 		user_id: req.session.user.user_id
-	})
+	});
 
-	id = cardSet.dataValues.cardSet_id
-	cards = []
+	id = cardSet.dataValues.cardSet_id;
+	cards = [];
 
-	req.body.flashcards.forEach(flashcard=>{
+	req.body.flashcards.forEach(flashcard => {
 		card = {
-			card_front:flashcard.term,
-			card_back:flashcard.definition,
-			cardSet_id:id
-		}
-		cards.push(card)
-	})
-	await Card.bulkCreate(cards)
-	res.sendStatus(200)
-})
+			card_front: flashcard.term,
+			card_back: flashcard.definition,
+			cardSet_id: id
+		};
+		cards.push(card);
+	});
+	await Card.bulkCreate(cards);
+	res.sendStatus(200);
+});
 
 //Display set page
-app.get('/cardSet/:id', async function (req, res) {
+app.get("/cardSet/:id", async function (req, res) {
 	try {
-		var set = await CardSet.findByPk(req.params.id, {raw:true})
-		set.user = req.session.user
+		var set = await CardSet.findByPk(req.params.id, { raw: true });
+		set.user = req.session.user;
 
-		res.render('cardSetPage', set)
-	}
-	catch (e) {
+		res.render("cardSetPage", set);
+	} catch (e) {
 		console.log(e);
 	}
-})
+});
+
+app.get("/deleteCardSet/:id", async function (req, res) {
+	var doc = "lol";
+	try {
+		t = await sequelize.transaction();
+		var cardSet = await CardSet.findByPk(req.params.id, { transaction: t });
+		await cardSet.destroy({ transaction: t });
+		// await t.commit();
+		await t.rollback();
+		return res.status(200).send();
+
+	} catch (e) {
+		console.log(e);
+		if (t)
+			await t.rollback();
+		return res.status(400).send();
+	}
+});
 
 ///////
 // SQL queries, send JSON as response
 //////
 
-// Get all users 
+// Get all users
 app.get("/api/getUsers", async (req, res) => {
-
 	try {
 		var users = await User.findAll({
-			raw: true,
-		})
-		res.json(users);
-	}
-	catch (e) {
-		console.log(e);
-	}
-})
-
-// Get all users and include card sets
-app.get("/api/getUsersWithCardSets", async (req, res) => {
-
-	try {
-		var users = await User.findAll({
-			raw: true,
-			include: [{ model: CardSet, as: "CardSets" }]
-		})
-		res.json(users);
-	}
-	catch (e) {
-		console.log(e);
-	}
-
-})
-
-
-// Gets all cardsets
-app.get("/api/getCardSets", async (req, res) => {
-
-	try {
-		var CardSets = await CardSet.findAll({
-			raw: true,
-			include: [{ model: Card, as: "Cards" }],
+			raw: true
 		});
-		res.json(CardSets);
-	}
-	catch (e) {
-		console.log(e);
-	}
-})
-
-// Gets all cards
-app.get("/api/getCards", async (req, res) => {
-
-	try {
-		var Cards = await Card.findAll({
-			raw: true,
-		});
-		res.json(Cards);
-	}
-	catch (e) {
+		res.json(users);
+	} catch (e) {
 		console.log(e);
 	}
 });
 
+// Get all users and include card sets
+app.get("/api/getUsersWithCardSets", async (req, res) => {
+	try {
+		var users = await User.findAll({
+			raw: true,
+			include: [{ model: CardSet, as: "CardSets" }]
+		});
+		res.json(users);
+	} catch (e) {
+		console.log(e);
+	}
+});
 
+// Gets all cardsets
+app.get("/api/getCardSets", async (req, res) => {
+	try {
+		var CardSets = await CardSet.findAll({
+			raw: true,
+			include: [{ model: Card, as: "Cards" }]
+		});
+		res.json(CardSets);
+	} catch (e) {
+		console.log(e);
+	}
+});
+
+// Gets all cards
+app.get("/api/getCards", async (req, res) => {
+	try {
+		var Cards = await Card.findAll({
+			raw: true
+		});
+		res.json(Cards);
+	} catch (e) {
+		console.log(e);
+	}
+});
 
 //Route to get card set json
-app.get('/api/cardSet/:id', async function (req, res) {
+app.get("/api/cardSet/:id", async function (req, res) {
 	var set = await CardSet.findByPk(req.params.id, {
-		include: [{
-			model: Card,
-			as: "Cards"
-		},
-		{
-			model: User,
-			attributes: ["username"]
-		}]
-	})
+		include: [
+			{
+				model: Card,
+				as: "Cards"
+			},
+			{
+				model: User,
+				attributes: ["username"]
+			}
+		]
+	});
 
-	res.json(set)
-})
+	res.json(set);
+});
 
 // start up the server
-var server = app.listen(app.get('port'), function () {
-	console.log("Server started...")
-})
+var server = app.listen(app.get("port"), function () {
+	console.log("Server started...");
+});

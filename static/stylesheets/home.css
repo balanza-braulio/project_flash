@@ -1,16 +1,15 @@
 .setCard {
   background: linear-gradient(150deg, #f00000 0%, #663b39 67%, #5c0000 100%);
   border-radius: 20px;
-  /* width: 1323px; */
-  height: 294px;
+  min-height: 294px;
   box-shadow: -5px 5px 2px rgba(0, 0, 0, 0.2);
   stroke-width: 1;
   padding: 30px;
 }
 
 .setCard_name {
-  height: 72px;
-  padding: 0px 0px 0px 20px;
+  min-height: 72px;
+  padding: 10px 10px 10px 20px;
   border-radius: 20px;
   background-color: #ffffff;
   background-size: cover;
@@ -29,7 +28,7 @@
 }
 
 .setCard_description {
-  height: 152px;
+  min-height: 152px;
   padding: 10px 10px 10px 20px;
   border-radius: 20px;
   background-color: #ffffff;
@@ -42,6 +41,7 @@
 }
 
 .setCard_viewBtn {
+  padding: 10px;
   mix-blend-mode: overlay;
   height: 72px;
   background: white;
