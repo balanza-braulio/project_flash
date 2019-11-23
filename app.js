@@ -314,6 +314,7 @@ app.get("/api/getCards", async (req, res) => {
 app.get('/cardSet/:id', async function (req, res) {
 	try {
 		var set = await CardSet.findByPk(req.params.id, {raw:true})
+		set.user = req.session.user
 
 		res.render('cardSetPage', set)
 	}

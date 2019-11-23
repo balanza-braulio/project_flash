@@ -10,12 +10,14 @@ $(document).ready(async function() {
 
     var cards = list.Cards
 
+    $(".description")[0].innerHTML = list.cardSet_description
+
     for(var i = 0; i < cards.length; i++) { 
         var temp = $("#template").clone()
 
         temp.attr("class", "mySlides transition")
         temp.find("#front")[0].innerHTML = cards[i].card_front
-        temp.find("#back")[0].innerHTML = cards[i].card_back
+        temp.find("#back")[0].innerHTML = resize(cards[i].card_back, temp.find("#back"))
         temp.find(".numbertext")[0].innerHTML = `${i+1} / ${cards.length}`
         temp[0].removeAttribute("hidden")
         temp[0].removeAttribute("id")
@@ -67,4 +69,26 @@ function showSlides(n) {
   }
 
   slides[slideIndex-1].style.display = "block";
+}
+
+function resize(str, selector) {
+
+    let size = 32
+    if(str.length > 200) {
+        selector.css("font-size", "16px")
+        let i = str.lastIndexOf(" ", 200)
+        return str.substring(0, i) + "..."
+    }
+    else if(str.length > 150) { 
+        size = 18
+    }
+    else if(str.length > 100) { 
+        size = 22
+    }
+    else if(str.length > 50) {
+        size = 26
+    }
+
+    selector.css("font-size", `${size}px`)
+    return str
 }
