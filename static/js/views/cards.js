@@ -1,8 +1,6 @@
 var slideIndex = 1;
 
 $(document).ready(async function() { 
-    //retriveData("/templates/cards.handlebars", "#CarouselContent", `/api/cardSet/${$("#set").attr("value")}`)
-
     var list = await $.ajax({
         datatype: "json",
         url: `/api/cardSet/${$("#set").attr("value")}`
@@ -80,13 +78,13 @@ function resize(str, selector) {
         return str.substring(0, i) + "..."
     }
     else if(str.length > 150) { 
-        size = 18
+        size = 16
     }
     else if(str.length > 100) { 
-        size = 22
+        size = 20
     }
     else if(str.length > 50) {
-        size = 26
+        size = 24
     }
 
     selector.css("font-size", `${size}px`)

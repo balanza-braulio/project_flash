@@ -246,6 +246,21 @@ app.post('/create-flash', async function(req,res){
 	res.sendStatus(200)
 })
 
+//Display set page
+app.get('/cardSet/:id', async function (req, res) {
+	try {
+		var set = await CardSet.findByPk(req.params.id, {raw:true})
+		set.user = req.session.user
+		if(req.session.user)
+			set.owned = req.session.user.username == set.user.username
+
+		res.render('cardSetPage', set)
+	}
+	catch (e) {
+		console.log(e);
+	}
+})
+
 ///////
 // SQL queries, send JSON as response
 //////
@@ -310,33 +325,25 @@ app.get("/api/getCards", async (req, res) => {
 	}
 });
 
-//Display set page
-app.get('/cardSet/:id', async function (req, res) {
-	try {
-		var set = await CardSet.findByPk(req.params.id, {raw:true})
-		set.user = req.session.user
+//Route to get card set json
+app.get('/api/cardSet/:id', async function (req, res) {
+	try{
+		var set = await CardSet.findByPk(req.params.id, {
+			include: [{
+				model: Card,
+				as: "Cards"
+			},
+			{
+				model: User,
+				attributes: ["username"]
+			}]
+		})
 
-		res.render('cardSetPage', set)
+		res.json(set)
 	}
 	catch (e) {
 		console.log(e);
 	}
-})
-
-//Route to get card set json
-app.get('/api/cardSet/:id', async function (req, res) {
-	var set = await CardSet.findByPk(req.params.id, {
-		include: [{
-			model: Card,
-			as: "Cards"
-		},
-		{
-			model: User,
-			attributes: ["username"]
-		}]
-	})
-
-	res.json(set)
 })
 
 // start up the server

@@ -8,6 +8,9 @@
 
 <button class="btn btn-primary" id="flash-view">Flashcards</button>
 <button class="btn btn-primary" id="list-view">List</button> 
+{{#if owned}}
+<button class="btn btn-primary" id="edit-button" href="/edit-flash/{{cardSet_id}}">Edit &#x270E;</button>
+{{/if}}
 
 <div class="slideshow-container">
     <div id="slideshow-slides"></div>
