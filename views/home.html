@@ -1,9 +1,10 @@
+
 <link rel="stylesheet" href="stylesheets/home.css" />
-<h3 style="color:white;">Hello {{user.username}}</h3>
-<div id="cardSets">
+<div id="cardSets" class="container-fluid">
+<h1>My Card Sets!</h1>
   {{debug}} {{#cardSets}}
   <div id="{{cardSet_id}}" class="d-flex  justify-content-center mb-4 cardFlex">
-    <div class="col-8 ">
+    <div class="col-12">
       <div class="container setCard">
         <div class="d-flex justify-content-between mb-3">
           <div class="col-5">
@@ -20,7 +21,7 @@
           </button>
         </div>
         <div class="d-flex justify-content-between">
-          <div class="col-8">
+          <div class="col-9">
             <div class="container setCard_description">
               {{cardSet_description}}
             </div>
@@ -40,5 +41,45 @@
   </div>
 
   {{/cardSets}}
+
+<h1>My Liked Card Sets:</h1>
+{{#likedCardSets}}
+<div id="{{cardSet_id}}" class="d-flex  justify-content-center mb-4 cardFlex">
+    <div class="col-12">
+      <div class="container setCard_liked">
+        <div class="d-flex justify-content-between mb-3">
+          <div class="col-5">
+            <div class="container setCard_name d-flex align-items-center">
+              {{cardSet_name}}
+            </div>
+          </div>
+          <button
+            id="deleteLike/{{cardSet_id}}"
+            type="button"
+            class="btn btn-danger setCard_unlike"
+          >
+            Unlike
+          </button>
+        </div>
+        <div class="d-flex justify-content-between">
+          <div class="col-9">
+            <div class="container setCard_description">
+              {{cardSet_description}}
+            </div>
+          </div>
+          <div class="d-flex flex-column justify-content-end">
+            <a href="/cardSet/{{cardSet_id}}"
+              ><button type="button" class="btn mask setCard_viewBtn">
+                <div class="d-flex flex-column align-items-center">
+                  <p>View Set</p>
+                </div>
+              </button></a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{{/likedCardSets}}
 </div>
 <script src="/js/views/home.js"></script>

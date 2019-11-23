@@ -100,7 +100,7 @@ app.get("/home", async function (req, res) {
 				where: { user_id: req.session.user.user_id },
 				order: [["cardSet_name", "DESC"]]
 			});
-			const userWithLikedCardSets = await User.findByPk(req.session.user.user_id,{
+			const userWithLikedCardSets = await User.findByPk(req.session.user.user_id, {
 				attributes: {},
 				include: [{
 					model: CardSet,
@@ -112,7 +112,7 @@ app.get("/home", async function (req, res) {
 			});
 
 			var likedCardSets = userWithLikedCardSets.LikedCardSets;
-			res.render("home", { user: req.session.user, cardSets: cardSets, likedCardSets: likedCardSets});
+			res.render("home", { user: req.session.user, cardSets: cardSets, likedCardSets: likedCardSets });
 		}
 		catch (e) {
 			console.log(e);
@@ -259,22 +259,40 @@ app.post("/create-flash", async function (req, res) {
 	res.sendStatus(200);
 });
 
-//Display set page
-app.get("/cardSet/:id", async function (req, res) {
-	try {
-		var set = await CardSet.findByPk(req.params.id, { raw: true });
-		set.user = req.session.user;
+///////
+// SQL queries no rendering
+//////
 
-		res.render("cardSetPage", set);
-	} catch (e) {
+// Deletes liked association
+app.delete('/deleteLike/:id', async (req, res) => {
+
+	try {
+		var t = await sequelize.transaction();
+		await Liked.destroy({ where: { cardSet_id: req.params.id }, transaction: t });
+		await t.commit();
+		// await t.rollback();
+		res.status(200).send();
+	}
+	catch (e) {
 		console.log(e);
+		await t.rollback();
+		res.status(400).send();
 	}
 });
 
-app.get("/deleteCardSet/:id", async function (req, res) {
+// Deletes a  users card
+app.delete("/deleteCardSet/:id", async function (req, res) {
 	try {
-		t = await sequelize.transaction();
-		var cardSet = await CardSet.findByPk(req.params.id, { transaction: t });
+		var t = await sequelize.transaction();
+		// Find all the card sets to delete 
+		var cardSet = await CardSet.findByPk(req.params.id, {
+			include: [{
+				model: Card,
+				as: "Cards",
+			}],
+			transaction: t,
+		});
+		await Liked.destroy({ where: { cardSet_id: req.params.id }, transaction: t });
 		await cardSet.destroy({ transaction: t });
 		await t.commit();
 		// await t.rollback();
