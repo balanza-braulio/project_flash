@@ -1,3 +1,5 @@
+var slideIndex = 1;
+
 $(document).ready(async function() { 
     //retriveData("/templates/cards.handlebars", "#CarouselContent", `/api/cardSet/${$("#set").attr("value")}`)
 
@@ -11,16 +13,14 @@ $(document).ready(async function() {
     for(var i = 0; i < cards.length; i++) { 
         var temp = $("#template").clone()
 
+        temp.attr("class", "mySlides transition")
         temp.find("#front")[0].innerHTML = cards[i].card_front
         temp.find("#back")[0].innerHTML = cards[i].card_back
+        temp.find(".numbertext")[0].innerHTML = `${i+1} / ${cards.length}`
         temp[0].removeAttribute("hidden")
         temp[0].removeAttribute("id")
 
-        if(i == 0) {
-            temp.attr("class", "carousel-item active")
-        }
-        
-        $(".carousel-inner").append(temp)
+        $("#slideshow-slides").append(temp)
 
         var tablerow = $("<tr>")
         tablerow.append($(`<th scope='row'>${i+1}</th>`))
@@ -29,17 +29,42 @@ $(document).ready(async function() {
         $("#table-body").append(tablerow)
     }
 
+    //Event to flip card
+    $(".flip-card-inner").on("click", function() { 
+        console.log(this)
+        this.classList.toggle("is-flipped")
+    })
+
+    showSlides(slideIndex);
+
     $("#author-username")[0].innerHTML = list.user.username
 })
 
-//Button to display carousel
+//Button to display slideshow
 $("#flash-view").on("click", function() { 
-    $("#myCarousel")[0].removeAttribute("hidden")
+    $(".slideshow-container")[0].removeAttribute("hidden")
     $("#tableView").attr("hidden","")
 })
 
 //Button to display table
 $("#list-view").on("click", function() { 
     $("#tableView")[0].removeAttribute("hidden")
-    $("#myCarousel").attr("hidden","")
+    $(".slideshow-container").attr("hidden","")
 })
+
+// Next/previous controls
+function plusSlides(n) {
+  showSlides(slideIndex += n);
+}
+
+function showSlides(n) {
+  var i;
+  var slides = document.getElementsByClassName("mySlides");
+  if (n > slides.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = slides.length}
+  for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";
+  }
+
+  slides[slideIndex-1].style.display = "block";
+}

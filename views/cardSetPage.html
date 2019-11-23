@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/cardsetview.css" />
 
 <h3 id="set" value="{{cardSet_id}}">{{cardSet_name}}</h3>
 
@@ -5,17 +6,13 @@
 <button class="btn btn-primary" id="flash-view">Flashcards</button>
 <button class="btn btn-primary" id="list-view">List</button> 
 
-<div id="myCarousel" class="carousel slide" data-ride="carousel">
-    <div class="carousel-inner"></div>
+<div class="slideshow-container">
+    <div id="slideshow-slides"></div>
 
-    <!-- Carousel controls -->
-    <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-    </a>
-    <a class="carousel-control-next" href="#myCarousel" data-slide="next">
-        <span class="carousel-control-next-icon"></span>
-    </a>
+    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+    <a class="next" onclick="plusSlides(1)">&#10095;</a>
 </div>
+
 
 <table class="table table-striped" id="tableView" hidden>
     <thead>
@@ -38,14 +35,15 @@
 
 <!-- Template -->
 
-<div class="carousel-item" id="template" hidden>
+<div id="template" hidden>
+    <div class="numbertext"></div>
     <div class="flip-card">
         <div class="flip-card-inner">
             <div class="flip-card-front">
-                <h1 id="front"></h1>
+                <span id="front"></span>
             </div>
             <div class="flip-card-back">
-                <h1 id="back"></h1>
+                <div id="back"></div>
             </div>
         </div>
     </div>
