@@ -1,22 +1,35 @@
-<h3 style="color:white;" >Hello {{user.username}}</h3>
-<div class="container bg-light"></div>
-{{debug}}
-<!-- Then put toasts within -->
-<div class="row">
-  {{#cardSets}} {{#modThree @index}} {{#notZero @index}}
-</div>
-<div class="row">
-  {{/notZero}} {{/modThree}}
-  <div class="card m-2" style="width: 18rem;">
-    <img src="" class="card-img-top" alt="" />
-    <div class="card-body">
-      <h5 class="card-title">{{cardSet_name}}</h5>
-      <p class="card-text">
-        {{cardSet_description}}
-      </p>
-      <a href="#" class="btn btn-primary">Go somewhere</a>
+<link rel="stylesheet" href="stylesheets/home.css" />
+<h3 style="color:white;">Hello {{user.username}}</h3>
+{{debug}} {{#cardSets}}
+<div class="d-flex  justify-content-center mb-4">
+  <div class="col-8 ">
+    <div class="container setCard">
+      <div class="d-flex justify-content-between mb-3">
+        <div class="col-5">
+          <div class="container setCard_name d-flex align-items-center">
+            {{cardSet_name}}
+          </div>
+        </div>
+        <button type="button" class="btn btn-danger setCard_delBtn ">X</button>
+      </div>
+      <div class="d-flex justify-content-between">
+        <div class="col-8">
+          <div class="container setCard_description">
+            {{cardSet_description}}
+          </div>
+        </div>
+        <div class="d-flex flex-column justify-content-end">
+          <a href="/cardSet/{{cardSet_id}}"
+            ><button type="button" class="btn mask setCard_viewBtn">
+              <p>View Set</p>
+            </button></a
+          >
+        </div>
+      </div>
     </div>
   </div>
-  {{/cardSets}}
 </div>
+
+{{/cardSets}}
+
 <script src="/js/views/home.js"></script>
