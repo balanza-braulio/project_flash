@@ -257,7 +257,8 @@ app.post("/create-flash", async function (req, res) {
 	var cardSet = await CardSet.create({
 		cardSet_name: req.body.title,
 		cardSet_description: req.body.description,
-		user_id: req.session.user.user_id
+		user_id: req.session.user.user_id,
+		popularity: 0
 	});
 
 	id = cardSet.dataValues.cardSet_id;
