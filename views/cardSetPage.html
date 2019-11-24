@@ -8,7 +8,7 @@
 
 <button class="btn btn-primary" id="flash-view">Flashcards</button>
 <button class="btn btn-primary" id="list-view">List</button> 
-{{#if cardSet.owned}}
+{{#if cardSet.isOwner}}
 <button class="btn btn-primary" id="edit-button" href="/edit-flash/{{cardSet.cardSet_id}}">Edit &#x270E;</button>
 {{/if}}
 

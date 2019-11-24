@@ -324,7 +324,7 @@ app.delete("/deleteCardSet/:id", async function (req, res) {
 });
 
 //Display set page
-app.get('/cardSet/:id', async function (req, res) {
+app.get("/cardSet/:id", async function (req, res) {
 
 	try {
 		var cardSet = await CardSet.findByPk(req.params.id);
@@ -332,8 +332,8 @@ app.get('/cardSet/:id', async function (req, res) {
 		var isOwner;
 
 		if (user)
-			isOwner = user.user_id == cardSet.cardSet_id;
-		else
+			isOwner = user.user_id == cardSet.user_id;
+		else 
 			isOwner = false;
 
 
@@ -356,6 +356,7 @@ app.get('/cardSet/:id', async function (req, res) {
 		}
 		// Set to data values only
 		cardSet = cardSet.dataValues;
+		cardSet.isOwner = isOwner;
 		res.render('cardSetPage', {cardSet:cardSet, user:req.session.user})
 	}
 	catch (e) {
