@@ -105,7 +105,7 @@ app.get("/login", function (req, res) {
 });
 
 app.get("/home", async function (req, res) {
-	req.session.user = await User.findByPk(14, { raw: true });
+	// req.session.user = await User.findByPk(14, { raw: true });
 	if (req.session.user == null) {
 		res.redirect("/");
 	} else {
@@ -332,16 +332,16 @@ app.get('/cardSet/:id', async function (req, res) {
 
 		if (user)
 			isOwner = user.user_id == cardSet.cardSet_id;
-		else 
+		else
 			isOwner = false;
-		
+
 
 		// Updates popularity if user seeing flashcard is not the owner
 		if (!isOwner) {
 			try {
 				var t = await sequelize.transaction();
 				cardSet.popularity = cardSet.popularity + 1;
-				await cardSet.save({transaction: t});	
+				await cardSet.save({ transaction: t });
 				await t.commit();
 			}
 			catch (e) {
@@ -364,8 +364,39 @@ app.get('/cardSet/:id', async function (req, res) {
 })
 
 ///////
-// SQL queries, send JSON as response
-//////
+// SQL queries, no rendering
+///////
+
+app.post("/api/likeCardSet/", async (req, res) => {
+
+	var idToLike = req.body.id;
+	var user = req.session.user
+	try {
+
+		if (!user)
+			throw "Login to save card sets!";
+		try {
+			var t = await sequelize.transaction();
+			await Liked.create({
+				user_id: user.user_id,
+				cardSet_id: idToLike,
+			}, {
+				transaction: t
+			});
+			t.commit();
+		}
+		catch (e) {
+			console.log(e);
+			t.rollback();
+		}
+	}
+	catch (e) {
+		console.log(e);
+		res.status(401).send(e);
+	}
+
+
+});
 
 // Get all users
 app.get("/api/getUsers", async (req, res) => {
