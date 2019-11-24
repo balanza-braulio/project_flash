@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="stylesheets/welcome.css" />
 <div id="jumbo" class="jumbotron">
 
     <h1 class="display-4">Welcome to Flash!</h1>
@@ -7,5 +8,39 @@
         flashcards using the search bar.</p>
     <a class="btn btn-danger btn-lg" href="/sign-up" role="button"><span class="nav-button">Sign Up</span></a>
 </div>
+<h4>Card Sets</h4>
+<h1>My Card Sets!</h1>
+<div id="{{cardSet_id}}" class="d-flex  justify-content-center mb-4 cardFlex">
+    <div class="col-12">
+        <div class="container setCard">
+            <div class="d-flex justify-content-between mb-3">
+                <div class="col-5">
+                    <div class="container setCard_name d-flex align-items-center">
+                        {{cardSet_name}}
+                    </div>
+                </div>
+                <button id="deleteCardSet/{{cardSet_id}}" type="button" class="btn btn-danger setCard_delBtn">
+                    X
+                </button>
+            </div>
+            <div class="d-flex justify-content-between">
+                <div class="col-9">
+                    <div class="container setCard_description">
+                        {{cardSet_description}}
+                    </div>
+                </div>
+                <div class="d-flex flex-column justify-content-end">
+                    <a href="/cardSet/{{cardSet_id}}"><button type="button" class="btn mask setCard_viewBtn">
+                            <div class="d-flex flex-column align-items-center">
+                                <p>View Set</p>
+                            </div>
+                        </button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{/cardSets}
 
 <script src="/js/views/welcome.js"></script>

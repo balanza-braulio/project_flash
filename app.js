@@ -80,6 +80,22 @@ app.get("/", async function (req, res) {
 	}
 });
 
+app.get("/welcome", async (req, res) => {
+
+	try {
+		var t = await sequelize.transaction();
+		var cardSets = await CardSet.findAll({ order: [["popularity", "DESC"]], transaction: t });
+		res.render("welcome", { cardSets: cardSets})
+		t.commit();
+
+	}
+	catch (e) {
+		console.log(e);
+		t.rollback();
+	}
+
+});
+
 app.get("/login", function (req, res) {
 	if (req.session.user != null) {
 		res.redirect("/");
@@ -309,9 +325,9 @@ app.delete("/deleteCardSet/:id", async function (req, res) {
 //Display set page
 app.get('/cardSet/:id', async function (req, res) {
 	try {
-		var set = await CardSet.findByPk(req.params.id, {raw:true})
+		var set = await CardSet.findByPk(req.params.id, { raw: true })
 		set.user = req.session.user
-		if(req.session.user)
+		if (req.session.user)
 			set.owned = req.session.user.username == set.user.username
 
 		res.render('cardSetPage', set)
@@ -377,17 +393,17 @@ app.get("/api/getCards", async (req, res) => {
 
 //Route to get card set json
 app.get("/api/cardSet/:id", async function (req, res) {
-	try{
+	try {
 		var set = await CardSet.findByPk(req.params.id, {
 			include: [
-			{
-				model: Card,
-				as: "Cards"
-			},
-			{
-				model: User,
-				attributes: ["username"]
-			}]
+				{
+					model: Card,
+					as: "Cards"
+				},
+				{
+					model: User,
+					attributes: ["username"]
+				}]
 		})
 
 		res.json(set)
