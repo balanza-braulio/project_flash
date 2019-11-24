@@ -23,7 +23,11 @@ module.exports = function(sequelize, DataTypes) {
         model: 'users',
         key: 'user_id'
       }
-    }
+    },
+    popularity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   }, {
     tableName: 'cardSet',
     timestamps: false,

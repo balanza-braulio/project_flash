@@ -85,7 +85,7 @@ app.get("/welcome", async (req, res) => {
 	try {
 		var t = await sequelize.transaction();
 		var cardSets = await CardSet.findAll({ order: [["popularity", "DESC"]], transaction: t });
-		res.render("welcome", { cardSets: cardSets})
+		res.render("welcome", { cardSets: cardSets })
 		t.commit();
 
 	}
@@ -324,17 +324,43 @@ app.delete("/deleteCardSet/:id", async function (req, res) {
 
 //Display set page
 app.get('/cardSet/:id', async function (req, res) {
-	try {
-		var set = await CardSet.findByPk(req.params.id, { raw: true })
-		set.user = req.session.user
-		if (req.session.user)
-			set.owned = req.session.user.username == set.user.username
 
-		res.render('cardSetPage', set)
+	try {
+		var cardSet = await CardSet.findByPk(req.params.id);
+		var user = req.session.user;
+		var isOwner;
+
+		if (user)
+			isOwner = user.user_id == cardSet.cardSet_id;
+		else 
+			isOwner = false;
+		
+
+		// Updates popularity if user seeing flashcard is not the owner
+		if (!isOwner) {
+			try {
+				var t = await sequelize.transaction();
+				cardSet.popularity = cardSet.popularity + 1;
+				await cardSet.save({transaction: t});	
+				await t.commit();
+			}
+			catch (e) {
+				console.log(e);
+				await t.rollback();
+			}
+
+		}
+		if (isOwner) {
+
+		}
+		// Set to data values only
+		cardSet = cardSet.dataValues;
+		res.render('cardSetPage', cardSet)
 	}
 	catch (e) {
 		console.log(e);
 	}
+
 })
 
 ///////
