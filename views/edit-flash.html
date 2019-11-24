@@ -14,28 +14,27 @@
     </div>
 </div>
 <div class="container" id="create-flash-content">
-    
 
-        <div id="flashcards" class="col" id="{{cardSet_id}}">
+    <div id="flashcards" class="col" set_id="{{cardSet_id}}">
 
             {{#Cards}}
-              <div id="flashcard-group" class="row" card_id="{{card_id}}">
-                  <span class="index">{{inc @index}}.</span>
-                  <div class="def-term">
-                      <textarea class="flash-input term-input" placeholder="Term">{{card_front}}</textarea>
-                      <textarea class="flash-input def-input" placeholder="Definition">{{card_back}}</textarea>
-                  </div>
-                  <i class="fas fa-trash-alt delete-flash"></i>
-              </div>
+                <div class="row flashcard-group" card_id="{{card_id}}" value="0">
+                    <span class="index">{{inc @index}}.</span>
+                    <div class="def-term">
+                        <textarea class="flash-input term-input" placeholder="Term">{{card_front}}</textarea>
+                        <textarea class="flash-input def-input" placeholder="Definition">{{card_back}}</textarea>
+                    </div>
+                    <i class="fas fa-trash-alt delete-flash" id="delete-flash"></i>
+                </div>
             {{/Cards}}
-        </div>
+    </div>
 
 
-        <div class="container">
-            <div class="row">
-                <a id="add-flash" class="btn btn-warning btn-lg" role="button"><span class="nav-button" id="add-flash-text">ADD FLASH</span></a>
-            </div>
+    <div class="container">
+        <div class="row">
+            <a id="add-flash" class="btn btn-warning btn-lg" role="button"><span class="nav-button" id="add-flash-text">ADD FLASH</span></a>
         </div>
+    </div>
    
 </div>
 <div class="container">
@@ -45,5 +44,17 @@
 </div>
 </div>
 {{/set}}
-<script src="/js/edit-flash.js"></script>
 </div>
+
+<!-- Template -->
+
+<div id="template" class="row flashcard-group" value="2" hidden>
+    <span class="index"></span>
+    <div class="def-term">
+        <textarea class="flash-input term-input" placeholder="Term"></textarea>
+        <textarea class="flash-input def-input" placeholder="Definition"></textarea>
+    </div>
+    <i class="fas fa-trash-alt delete-flash"></i>
+</div>
+
+<script src="/js/views/edit-flash.js"></script>
