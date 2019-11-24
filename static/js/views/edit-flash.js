@@ -4,9 +4,9 @@
 //3 = delete
 
 var set_id;
-var changed = [];
-var deleted = [];
-var index
+var index;
+
+//TODO add function to check if card has been changed
 
 $(document).ready(async function() {
     set_id = $("#flashcards").attr("set_id");
@@ -14,8 +14,6 @@ $(document).ready(async function() {
 })
 
 $(".delete-flash").on("click", function() { 
-    console.log("delete")
-
     var parent = $(this.parentElement);
 
     if(parent.attr("value") == "2"){
@@ -49,4 +47,51 @@ $("#add-flash").on("click", function() {
     flash.find(".index")[0].innerHTML = `${index}.`
     flash.removeAttr("hidden")
     $("#flashcards").append(flash)
+})
+
+$("#submit").on("click", function() {
+    var flashcards = $(".flashcard-group")
+    
+    //card_id, card_front, card_back
+    var changed = [];
+
+    //card_id
+    var deleted = [];
+
+    //card_front,card_back
+    var created = [];
+
+    for(var i = 0; i < flashcards.length - 1; i++) {
+        //modify
+        if($(flashcards[i]).attr("value") == "1") {
+            var temp = {};
+            temp.card_id = $(flashcards[i]).attr("card_id");
+            temp.card_front = $(flashcards[i]).find(".term-input")[0].innerHTML;
+            temp.card_back = $(flashcards[i]).find(".def-input")[0].innerHTML;
+            changed.push(temp);
+        }
+
+        //create
+        else if($(flashcards[i]).attr("value") == "2") {
+            var temp = {};
+            temp.card_front = $(flashcards[i]).find(".term-input")[0].innerHTML;
+            temp.card_back = $(flashcards[i]).find(".def-input")[0].innerHTML;
+            created.push(temp)
+        }
+
+        //delete
+        else if($(flashcards[i]).attr("value") == "3") {
+            deleted.push($(flashcards[i]).attr("card_id"));
+        }
+    }
+
+    //TODO check for invalid inputs
+
+    var payload = {cardchanged:changed, deleted:deleted, created: created}
+    payload.title = $("#title").attr("value")
+    payload.description = $("#description").attr("value")
+
+    console.log(payload)
+
+    //TODO ajax
 })
