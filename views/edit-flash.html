@@ -1,0 +1,49 @@
+
+{{debug}}
+{{#set}}
+<div id="content" class="Container">
+<div class="container">
+<div class="row">
+    <div class="form-group col-md-6">
+        <input type="email" class="form-control" id="title" placeholder="Subject, Chapter, Unit" value="{{cardSet_name}}">
+        <label id="title-label" for="exampleFormControlInput1">TITLE</label>
+    </div>
+    <div class="form-group col-md-6">
+        <input type="email" class="form-control" id="description" value="{{cardSet_description}}">
+        <label id="title-label" for="exampleFormControlInput1">Description</label>
+    </div>
+</div>
+<div class="container" id="create-flash-content">
+    
+
+        <div id="flashcards" class="col" id="{{cardSet_id}}">
+
+            {{#Cards}}
+              <div id="flashcard-group" class="row" card_id="{{card_id}}">
+                  <span class="index">{{inc @index}}.</span>
+                  <div class="def-term">
+                      <textarea class="flash-input term-input" placeholder="Term">{{card_front}}</textarea>
+                      <textarea class="flash-input def-input" placeholder="Definition">{{card_back}}</textarea>
+                  </div>
+                  <i class="fas fa-trash-alt delete-flash"></i>
+              </div>
+            {{/Cards}}
+        </div>
+
+
+        <div class="container">
+            <div class="row">
+                <a id="add-flash" class="btn btn-warning btn-lg" role="button"><span class="nav-button" id="add-flash-text">ADD FLASH</span></a>
+            </div>
+        </div>
+   
+</div>
+<div class="container">
+    <div class="row">
+        <a id="create" class="btn btn-danger btn-lg" role="button"><span class="nav-button">Create</span></a>
+    </div>
+</div>
+</div>
+{{/set}}
+<script src="/js/edit-flash.js"></script>
+</div>

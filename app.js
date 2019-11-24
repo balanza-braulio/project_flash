@@ -59,6 +59,11 @@ Handlebars.registerHelper("notZero", function (value, options) {
 	return options.inverse(this);
 });
 
+Handlebars.registerHelper("inc", function(value, options)
+{
+    return parseInt(value) + 1;
+});
+
 // Set static directoty
 app.use(express.static(path.join(__dirname, "static")));
 
@@ -276,6 +281,79 @@ app.post("/create-flash", async function (req, res) {
 	res.sendStatus(200);
 });
 
+//Display set page
+app.get("/cardSet/:id", async function (req, res) {
+
+	try {
+		var cardSet = await CardSet.findByPk(req.params.id);
+		var user = req.session.user;
+		var isOwner;
+
+		if (user)
+			isOwner = user.user_id == cardSet.user_id;
+		else 
+			isOwner = false;
+
+
+		// Updates popularity if user seeing flashcard is not the owner
+		if (!isOwner) {
+			try {
+				var t = await sequelize.transaction();
+				cardSet.popularity = cardSet.popularity + 1;
+				await cardSet.save({ transaction: t });
+				await t.commit();
+			}
+			catch (e) {
+				console.log(e);
+				await t.rollback();
+			}
+
+		}
+		if (isOwner) {
+
+		}
+		// Set to data values only
+		cardSet = cardSet.dataValues;
+		cardSet.isOwner = isOwner;
+		res.render('cardSetPage', {cardSet:cardSet, user:req.session.user})
+	}
+	catch (e) {
+		console.log(e);
+	}
+
+})
+
+app.get("/edit-flash/:id", async function (req, res) {
+	try {
+		//return 401 if user is not logged in
+		if(!req.session.user) {
+			console.log("Not logged in");
+			res.status(401).send();
+			return;
+		}
+
+		var set = await CardSet.findByPk(req.params.id, {
+			include: [
+				{
+					model: Card,
+					as: "Cards"
+				}]
+		})
+
+		//return 401 if user is not owner of set
+		if(set.user_id != req.session.user.user_id) {
+			console.log("Not correct user");
+			res.status(401).send();
+			return;
+		}
+
+		res.render("edit-flash", {set:set, user:req.session.user})
+
+	} catch (e) {
+		console.log(e);
+	}
+})
+
 ///////
 // SQL queries no rendering
 //////
@@ -322,48 +400,6 @@ app.delete("/deleteCardSet/:id", async function (req, res) {
 		return res.status(400).send();
 	}
 });
-
-//Display set page
-app.get("/cardSet/:id", async function (req, res) {
-
-	try {
-		var cardSet = await CardSet.findByPk(req.params.id);
-		var user = req.session.user;
-		var isOwner;
-
-		if (user)
-			isOwner = user.user_id == cardSet.user_id;
-		else 
-			isOwner = false;
-
-
-		// Updates popularity if user seeing flashcard is not the owner
-		if (!isOwner) {
-			try {
-				var t = await sequelize.transaction();
-				cardSet.popularity = cardSet.popularity + 1;
-				await cardSet.save({ transaction: t });
-				await t.commit();
-			}
-			catch (e) {
-				console.log(e);
-				await t.rollback();
-			}
-
-		}
-		if (isOwner) {
-
-		}
-		// Set to data values only
-		cardSet = cardSet.dataValues;
-		cardSet.isOwner = isOwner;
-		res.render('cardSetPage', {cardSet:cardSet, user:req.session.user})
-	}
-	catch (e) {
-		console.log(e);
-	}
-
-})
 
 ///////
 // SQL queries, no rendering
