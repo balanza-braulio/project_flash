@@ -355,7 +355,7 @@ app.get('/cardSet/:id', async function (req, res) {
 		}
 		// Set to data values only
 		cardSet = cardSet.dataValues;
-		res.render('cardSetPage', cardSet)
+		res.render('cardSetPage', {cardSet:cardSet, user:req.session.user})
 	}
 	catch (e) {
 		console.log(e);

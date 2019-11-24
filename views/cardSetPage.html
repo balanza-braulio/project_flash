@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="/stylesheets/cardsetview.css" />
-{{debug}}
-<h3 id="set" value="{{cardSet_id}}">{{cardSet_name}}</h3>
+{{cardSet.debug}}
+<h3 id="set" value="{{cardSet.cardSet_id}}">{{cardSet.cardSet_name}}</h3>
 
 <div class="jumbotron" id="card-set-view-flashcard">
 
@@ -8,8 +8,8 @@
 
 <button class="btn btn-primary" id="flash-view">Flashcards</button>
 <button class="btn btn-primary" id="list-view">List</button> 
-{{#if owned}}
-<button class="btn btn-primary" id="edit-button" href="/edit-flash/{{cardSet_id}}">Edit &#x270E;</button>
+{{#if cardSet.owned}}
+<button class="btn btn-primary" id="edit-button" href="/edit-flash/{{cardSet.cardSet_id}}">Edit &#x270E;</button>
 {{/if}}
 
 <div class="slideshow-container">
