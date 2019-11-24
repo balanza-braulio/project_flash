@@ -1,5 +1,5 @@
 // Libraries and dependencies
-const { sequelize, User, Card, CardSet } = require("./models");
+const { sequelize, User, Card, CardSet, Liked } = require("./models");
 const express = require("express");
 const hbs = require("express-handlebars");
 const Handlebars = require("handlebars");
@@ -80,6 +80,22 @@ app.get("/", async function (req, res) {
 	}
 });
 
+app.get("/welcome", async (req, res) => {
+
+	try {
+		var t = await sequelize.transaction();
+		var cardSets = await CardSet.findAll({ order: [["popularity", "DESC"]], transaction: t });
+		res.render("welcome", { cardSets: cardSets })
+		t.commit();
+
+	}
+	catch (e) {
+		console.log(e);
+		t.rollback();
+	}
+
+});
+
 app.get("/login", function (req, res) {
 	if (req.session.user != null) {
 		res.redirect("/");
@@ -93,14 +109,31 @@ app.get("/home", async function (req, res) {
 	if (req.session.user == null) {
 		res.redirect("/");
 	} else {
-		// Get the users card sets!
-		var cardSets = await CardSet.findAll({
-			raw: true,
-			where: { user_id: req.session.user.user_id },
-			order: [["cardSet_name", "DESC"]]
-		});
+		try {
+			// Get the users card sets!
+			var cardSets = await CardSet.findAll({
+				raw: true,
+				where: { user_id: req.session.user.user_id },
+				order: [["cardSet_name", "DESC"]]
+			});
+			const userWithLikedCardSets = await User.findByPk(req.session.user.user_id, {
+				attributes: {},
+				include: [{
+					model: CardSet,
+					as: "LikedCardSets",
+					through: {
+						model: Liked,
+					}
+				}],
+			});
 
-		res.render("home", { user: req.session.user, cardSets: cardSets });
+			var likedCardSets = userWithLikedCardSets.LikedCardSets;
+			res.render("home", { user: req.session.user, cardSets: cardSets, likedCardSets: likedCardSets });
+		}
+		catch (e) {
+			console.log(e);
+		}
+
 	}
 });
 
@@ -224,7 +257,8 @@ app.post("/create-flash", async function (req, res) {
 	var cardSet = await CardSet.create({
 		cardSet_name: req.body.title,
 		cardSet_description: req.body.description,
-		user_id: req.session.user.user_id
+		user_id: req.session.user.user_id,
+		popularity: 0
 	});
 
 	id = cardSet.dataValues.cardSet_id;
@@ -242,23 +276,40 @@ app.post("/create-flash", async function (req, res) {
 	res.sendStatus(200);
 });
 
-//Display set page
-app.get("/cardSet/:id", async function (req, res) {
-	try {
-		var set = await CardSet.findByPk(req.params.id, { raw: true });
-		set.user = req.session.user;
+///////
+// SQL queries no rendering
+//////
 
-		res.render("cardSetPage", set);
-	} catch (e) {
+// Deletes liked association
+app.delete('/deleteLike/:id', async (req, res) => {
+
+	try {
+		var t = await sequelize.transaction();
+		await Liked.destroy({ where: { cardSet_id: req.params.id }, transaction: t });
+		await t.commit();
+		// await t.rollback();
+		res.status(200).send();
+	}
+	catch (e) {
 		console.log(e);
+		await t.rollback();
+		res.status(400).send();
 	}
 });
 
-app.get("/deleteCardSet/:id", async function (req, res) {
-	var doc = "lol";
+// Deletes a  users card
+app.delete("/deleteCardSet/:id", async function (req, res) {
 	try {
-		t = await sequelize.transaction();
-		var cardSet = await CardSet.findByPk(req.params.id, { transaction: t });
+		var t = await sequelize.transaction();
+		// Find all the card sets to delete 
+		var cardSet = await CardSet.findByPk(req.params.id, {
+			include: [{
+				model: Card,
+				as: "Cards",
+			}],
+			transaction: t,
+		});
+		await Liked.destroy({ where: { cardSet_id: req.params.id }, transaction: t });
 		await cardSet.destroy({ transaction: t });
 		await t.commit();
 		// await t.rollback();
@@ -274,22 +325,79 @@ app.get("/deleteCardSet/:id", async function (req, res) {
 
 //Display set page
 app.get('/cardSet/:id', async function (req, res) {
-	try {
-		var set = await CardSet.findByPk(req.params.id, {raw:true})
-		set.user = req.session.user
-		if(req.session.user)
-			set.owned = req.session.user.username == set.user.username
 
-		res.render('cardSetPage', set)
+	try {
+		var cardSet = await CardSet.findByPk(req.params.id);
+		var user = req.session.user;
+		var isOwner;
+
+		if (user)
+			isOwner = user.user_id == cardSet.cardSet_id;
+		else
+			isOwner = false;
+
+
+		// Updates popularity if user seeing flashcard is not the owner
+		if (!isOwner) {
+			try {
+				var t = await sequelize.transaction();
+				cardSet.popularity = cardSet.popularity + 1;
+				await cardSet.save({ transaction: t });
+				await t.commit();
+			}
+			catch (e) {
+				console.log(e);
+				await t.rollback();
+			}
+
+		}
+		if (isOwner) {
+
+		}
+		// Set to data values only
+		cardSet = cardSet.dataValues;
+		res.render('cardSetPage', {cardSet:cardSet, user:req.session.user})
 	}
 	catch (e) {
 		console.log(e);
 	}
+
 })
 
 ///////
-// SQL queries, send JSON as response
-//////
+// SQL queries, no rendering
+///////
+
+app.post("/api/likeCardSet/", async (req, res) => {
+
+	var idToLike = req.body.id;
+	var user = req.session.user
+	try {
+
+		if (!user)
+			throw "Login to save card sets!";
+		try {
+			var t = await sequelize.transaction();
+			await Liked.create({
+				user_id: user.user_id,
+				cardSet_id: idToLike,
+			}, {
+				transaction: t
+			});
+			t.commit();
+		}
+		catch (e) {
+			console.log(e);
+			t.rollback();
+		}
+	}
+	catch (e) {
+		console.log(e);
+		res.status(401).send(e);
+	}
+
+
+});
 
 // Get all users
 app.get("/api/getUsers", async (req, res) => {
@@ -343,17 +451,17 @@ app.get("/api/getCards", async (req, res) => {
 
 //Route to get card set json
 app.get("/api/cardSet/:id", async function (req, res) {
-	try{
+	try {
 		var set = await CardSet.findByPk(req.params.id, {
 			include: [
-			{
-				model: Card,
-				as: "Cards"
-			},
-			{
-				model: User,
-				attributes: ["username"]
-			}]
+				{
+					model: Card,
+					as: "Cards"
+				},
+				{
+					model: User,
+					attributes: ["username"]
+				}]
 		})
 
 		res.json(set)
