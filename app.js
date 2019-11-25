@@ -566,6 +566,55 @@ app.get("/api/cardSet/:id", async function (req, res) {
 	}
 })
 
+app.patch("/api/editset", async function (req, res) {
+	try{
+		var t = await sequelize.transaction()
+
+		console.log("Body: ")
+		console.log(req.body)
+
+		//update set
+		await CardSet.update({
+			cardSet_name: req.body.title,
+			cardSet_description: req.body.description
+		},
+		{
+			where: { cardSet_id: req.body.cardSet_id },
+			transaction: t
+		})
+
+		//create new cards
+		await Card.bulkCreate(req.body.create, {transaction: t})
+
+		//update changed cards
+		for(var card of req.body.change) {
+			await Card.update({
+				card_front: card.card_front,
+				card_back: card.card_back
+			},
+			{
+				where: { card_id: card.card_id },
+				transaction: t
+			})
+		}
+
+		//delete cards
+		for(var id of req.body.destroy) {
+			await Card.destroy({ where: { card_id: id }, transaction: t })
+		}
+
+		await t.commit()
+
+		res.status(200).send()
+
+	} catch(e) {
+		console.log(e)
+		if (t)
+			await t.rollback()
+		return res.status(400).send();
+	}
+})
+
 // start up the server
 var server = app.listen(app.get("port"), function () {
 	console.log("Server started...");
