@@ -67,6 +67,19 @@ Handlebars.registerHelper("inc", function (value, options) {
 	return parseInt(value) + 1;
 });
 
+
+Handlebars.registerHelper("isCardSetFav", (cardSet_id, likedCardSets, options) => {
+
+	if (likedCardSets.length == 0)
+		return options.inverse(this);
+	// Have to do this to use find
+	var found = likedCardSets.find(element => element.cardSet_id == cardSet_id);
+	if (found)
+		return options.fn(this);
+	else
+		return options.inverse(this);
+});
+
 // Handlebars method to check if user is logged in
 Handlebars.registerHelper("isLogged", function (block) {
 	var user = app.locals.session.user;
@@ -102,7 +115,21 @@ app.get("/welcome", async (req, res) => {
 	try {
 		var t = await sequelize.transaction();
 		var cardSets = await CardSet.findAll({ order: [["popularity", "DESC"]], transaction: t });
-		res.render("welcome", { cardSets: cardSets })
+		var likedCardSets = [];
+
+		if (req.session.user) {
+			likedCardSets = await Liked.findAll({
+				where: {
+					user_id: req.session.user.user_id
+				},
+				attributes: [
+					"cardSet_id",
+				],
+				transaction: t,
+				raw: true,
+			});
+		}
+		res.render("welcome", { cardSets: cardSets, likedCardSets: likedCardSets })
 		t.commit();
 
 	}
@@ -371,7 +398,7 @@ app.get("/edit-flash/:id", async function (req, res) {
 //////
 
 // Deletes liked association
-app.delete('/deleteLike/:id', async (req, res) => {
+app.delete('/api/deleteLike/:id', async (req, res) => {
 
 	try {
 		var t = await sequelize.transaction();
@@ -387,7 +414,7 @@ app.delete('/deleteLike/:id', async (req, res) => {
 	}
 });
 
-// Deletes a  users card
+// Deletes a  users card set
 app.delete("/deleteCardSet/:id", async function (req, res) {
 	try {
 		var t = await sequelize.transaction();
@@ -413,10 +440,6 @@ app.delete("/deleteCardSet/:id", async function (req, res) {
 	}
 });
 
-///////
-// SQL queries, no rendering
-///////
-
 app.post("/api/likeCardSet/", async (req, res) => {
 
 	var idToLike = req.body.id;
@@ -439,7 +462,7 @@ app.post("/api/likeCardSet/", async (req, res) => {
 		catch (e) {
 			console.log(e);
 			t.rollback();
-			res.status(409).send("You have already saved this card set!");
+			res.status(409).send("Something went wrong when tyring to like this button!");
 		}
 	}
 	catch (e) {

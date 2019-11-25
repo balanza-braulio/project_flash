@@ -22,7 +22,7 @@ $(document.body).on("click", ".setCard_delBtn", async function () {
     }
 });
 $(".setCard_unlike").on("click",  async function () {
-    var delUrl = `/${$(this).attr("id")}`;
+    var delUrl = `/api/deleteLike/${$(this).attr("id")}`;
     var toDel = $(this)
         .closest(".cardFlex");
     try {

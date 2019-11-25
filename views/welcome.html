@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="stylesheets/welcome.css" />
+{{debug}}
 {{#isLogged}}
 {{else}}
 <div id="jumbo" class="jumbotron">
@@ -23,9 +24,15 @@
                             {{cardSet_name}}
                         </div>
                     </div>
-                    <button id="{{cardSet_id}}" type="button" class="btn btn-outline-light btn-like">
+                    {{#isCardSetFav cardSet_id ../likedCardSets}}
+                    <button id={{../cardSet_id}} type="button" class="btn btn-light btn-liked">
                         Like
                     </button>
+                    {{else}}
+                    <button id={{../cardSet_id}} type="button" class="btn btn-outline-light btn-like">
+                        Like
+                    </button>
+                    {{/isCardSetFav}}
                 </div>
                 <div class="d-flex justify-content-between">
                     <div class="col-9">
