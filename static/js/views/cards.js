@@ -40,13 +40,13 @@ $(document).ready(async function() {
     $("#author-username")[0].innerHTML = list.user.username
 })
 
-//Button to display slideshow
+// Button to display slideshow
 $("#flash-view").on("click", function() { 
     $(".slideshow-container")[0].removeAttribute("hidden")
     $("#tableView").attr("hidden","")
 })
 
-//Button to display table
+// Button to display table
 $("#list-view").on("click", function() { 
     $("#tableView")[0].removeAttribute("hidden")
     $(".slideshow-container").attr("hidden","")
