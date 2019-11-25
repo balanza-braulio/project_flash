@@ -12,35 +12,44 @@ jqueryNoConflict(document).ready(function () {
                 data: id,
                 success: (res, status) => {
 
-                    // toDel.slideUp(600, function () {
-                    //     toDel
-                    //         .remove();
-                    // });
+                    var likedAlert = $("<div>")
+                            .prop("id", "likedAlert")
+                            .prop("class", "alert alert-success alert-dismissible fade show ")
+                            .prop("role", "alert")
+                            .append($("<strong>").text("Card set " + toLikeName + " saved!"))
+                            .append($("<p>").text("Go to home to view it!"));
+
+                        likedAlert.delay(2000).fadeOut({duration: 1000, queue: true}, () => { likedAlert.remove() });
+
+                        $("#alerts").append(likedAlert);
                 },
                 error: e => {
+                    if (e.status == 401) {
+                        var loginAlert = $("<div>")
+                            .prop("id", "save_login")
+                            .prop("class", "alert alert-danger alert-dismissible fade show ")
+                            .prop("role", "alert")
+                            .append($("<strong>").text("Cannot save " + toLikeName + ": "))
+                            .append($("<p>").text(e.responseText));
 
-                    var name
-                    var loginAlert = $("<div>")
-                        .prop("id", "save_login")
-                        .prop("class", "alert alert-success alert-dismissible fade show ")
-                        .prop("role", "alert")
-                        .append($("<strong>").text("Cannot save " + toLikeName + ": "))
-                        .append($("<p>").text(e.responseText));
-                    // var saveAlertClose = $("<button>")
-                    //     .prop("type", "button")
-                    //     .prop("class", "close")
-                    //     .prop("data-dismiss", "alert")
-                    //     .prop("aria-label", "Close")
-                    //     .append($("<span>")
-                    //         .prop("aria-hidden", "true")
-                    //         .text("X"));
-                    // saveAlertClose.on("click",() => {
-                    loginAlert.delay(2000).fadeOut(1000, () => {loginAlert.remove()});
-                    // });
-                    // loginAlert.append(saveAlertClose);
+                        loginAlert.delay(2000).fadeOut(1000, () => { loginAlert.remove() });
 
-                    $("#alerts").append(loginAlert);
-                    return e;
+                        $("#alerts").append(loginAlert);
+                        return e;
+                    }
+                    else if (e.status == 409) {
+                            var alreadyLikedAlert = $("<div>")
+                                .prop("id", "alredyLiked")
+                                .prop("class", "alert alert-danger alert-dismissible fade show ")
+                                .prop("role", "alert")
+                                .append($("<strong>").text("Cannot like this card set (" + toLikeName + ")."))
+                                .append($("<p>").text(e.responseText));
+
+                            alreadyLikedAlert.delay(2000).fadeOut(1000, () => { alreadyLikedAlert.remove() });
+
+                            $("#alerts").append(alreadyLikedAlert);
+                            return e;
+                    }
                 }
             });
         } catch (e) {

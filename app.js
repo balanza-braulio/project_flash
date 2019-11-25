@@ -18,6 +18,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Initialize Express Session
 app.use(session({ secret: "Shh, its a secret!" }));
+app.use(function (req, res, next) {
+	app.locals.session = req.session;
+	next();
+});
 
 //Handlebars Middleware
 app.set("view engine", "html");
@@ -59,9 +63,17 @@ Handlebars.registerHelper("notZero", function (value, options) {
 	return options.inverse(this);
 });
 
-Handlebars.registerHelper("inc", function(value, options)
-{
-    return parseInt(value) + 1;
+Handlebars.registerHelper("inc", function (value, options) {
+	return parseInt(value) + 1;
+});
+
+// Handlebars method to check if user is logged in
+Handlebars.registerHelper("isLogged", function (block) {
+	var user = app.locals.session.user;
+	if (user)
+		return block.fn(this);
+	else
+		return block.inverse(this);
 });
 
 // Set static directoty
@@ -81,7 +93,7 @@ app.get("/", async function (req, res) {
 			where: { user_id: req.session.user.user_id },
 			order: [["cardSet_name", "DESC"]]
 		});
-		res.render("home", { user: req.session.user, cardSets: cardSets });
+		res.redirect("/home");
 	}
 });
 
@@ -103,7 +115,7 @@ app.get("/welcome", async (req, res) => {
 
 app.get("/login", function (req, res) {
 	if (req.session.user != null) {
-		res.redirect("/");
+		res.redirect("/home");
 	} else {
 		res.render("login");
 	}
@@ -291,7 +303,7 @@ app.get("/cardSet/:id", async function (req, res) {
 
 		if (user)
 			isOwner = user.user_id == cardSet.user_id;
-		else 
+		else
 			isOwner = false;
 
 
@@ -315,7 +327,7 @@ app.get("/cardSet/:id", async function (req, res) {
 		// Set to data values only
 		cardSet = cardSet.dataValues;
 		cardSet.isOwner = isOwner;
-		res.render('cardSetPage', {cardSet:cardSet, user:req.session.user})
+		res.render('cardSetPage', { cardSet: cardSet, user: req.session.user })
 	}
 	catch (e) {
 		console.log(e);
@@ -326,7 +338,7 @@ app.get("/cardSet/:id", async function (req, res) {
 app.get("/edit-flash/:id", async function (req, res) {
 	try {
 		//return 401 if user is not logged in
-		if(!req.session.user) {
+		if (!req.session.user) {
 			console.log("Not logged in");
 			res.status(401).send();
 			return;
@@ -341,13 +353,13 @@ app.get("/edit-flash/:id", async function (req, res) {
 		})
 
 		//return 401 if user is not owner of set
-		if(set.user_id != req.session.user.user_id) {
+		if (set.user_id != req.session.user.user_id) {
 			console.log("Not correct user");
 			res.status(401).send();
 			return;
 		}
 
-		res.render("edit-flash", {set:set, user:req.session.user})
+		res.render("edit-flash", { set: set, user: req.session.user })
 
 	} catch (e) {
 		console.log(e);
@@ -422,10 +434,12 @@ app.post("/api/likeCardSet/", async (req, res) => {
 				transaction: t
 			});
 			t.commit();
+			res.status(200).send();
 		}
 		catch (e) {
 			console.log(e);
 			t.rollback();
+			res.status(409).send("You have already saved this card set!");
 		}
 	}
 	catch (e) {

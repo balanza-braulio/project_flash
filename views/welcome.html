@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="stylesheets/welcome.css" />
+{{#isLogged}}
+{{else}}
 <div id="jumbo" class="jumbotron">
 
     <h1 style="color: black;" class="display-4">Welcome to Flash!</h1>
@@ -8,7 +10,7 @@
         flashcards using the search bar.</p>
     <a class="btn btn-danger btn-lg" href="/sign-up" role="button"><span class="nav-button">Sign Up</span></a>
 </div>
-
+{{/isLogged}}
 <h1>Card Sets!</h1>
 <div class="cardSets">
     {{debug}} {{#cardSets}}

@@ -69,7 +69,7 @@
         </a>
 
         <div class="collapse navbar-collapse" id="navbarResponsive">
-          {{#if user}}
+          {{#isLogged}}
           <div class="navbar-nav ml-auto">
             <div class="nav-item mx-0 mx-lg-1">
               <a class="btn btn-outline-danger" href="/"
@@ -100,7 +100,7 @@
               >
             </div>
           </div>
-          {{/if}}
+          {{/isLogged}}
           <form class="form-inline">
             <input
               id="search-box"
