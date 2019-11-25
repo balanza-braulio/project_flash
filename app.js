@@ -568,6 +568,9 @@ app.get("/api/cardSet/:id", async function (req, res) {
 
 app.patch("/api/editset", async function (req, res) {
 	try{
+
+		console.log(req.body)
+
 		var t = await sequelize.transaction();
 
 		//update set
@@ -581,23 +584,28 @@ app.patch("/api/editset", async function (req, res) {
 		});
 
 		//create new cards
-		await Card.bulkCreate(req.body.create, {transaction: t});
+		if(req.body.create)
+			await Card.bulkCreate(req.body.create, {transaction: t});
 
 		//update changed cards
-		for(var card of req.body.change) {
-			await Card.update({
-				card_front: card.card_front,
-				card_back: card.card_back
-			},
-			{
-				where: { card_id: card.card_id },
-				transaction: t
-			});
+		if(req.body.change){
+			for(var card of req.body.change) {
+				await Card.update({
+					card_front: card.card_front,
+					card_back: card.card_back
+				},
+				{
+					where: { card_id: card.card_id },
+					transaction: t
+				});
+			}
 		}
 
 		//delete cards
-		for(var id of req.body.destroy) {
-			await Card.destroy({ where: { card_id: id }, transaction: t });
+		if(req.body.destroy) {
+			for(var id of req.body.destroy) {
+				await Card.destroy({ where: { card_id: id }, transaction: t });
+			}
 		}
 
 		await t.commit();
