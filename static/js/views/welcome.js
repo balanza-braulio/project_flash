@@ -26,18 +26,18 @@ jqueryNoConflict(document).ready(function () {
                         .prop("role", "alert")
                         .append($("<strong>").text("Cannot save " + toLikeName + ": "))
                         .append($("<p>").text(e.responseText));
-                    var saveAlertClose = $("<button>")
-                        .prop("type", "button")
-                        .prop("class", "close")
-                        .prop("data-dismiss", "alert")
-                        .prop("aria-label", "Close")
-                        .append($("<span>")
-                            .prop("aria-hidden", "true")
-                            .text("X"));
-                    saveAlertClose.on("click",() => {
-                    loginAlert.fadeOut(500, () => {loginAlert.remove()})
-                    });
-                    loginAlert.append(saveAlertClose);
+                    // var saveAlertClose = $("<button>")
+                    //     .prop("type", "button")
+                    //     .prop("class", "close")
+                    //     .prop("data-dismiss", "alert")
+                    //     .prop("aria-label", "Close")
+                    //     .append($("<span>")
+                    //         .prop("aria-hidden", "true")
+                    //         .text("X"));
+                    // saveAlertClose.on("click",() => {
+                    loginAlert.delay(2000).fadeOut(1000, () => {loginAlert.remove()});
+                    // });
+                    // loginAlert.append(saveAlertClose);
 
                     $("#alerts").append(loginAlert);
                     return e;

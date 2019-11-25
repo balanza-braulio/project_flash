@@ -74,7 +74,7 @@ app.use(express.static(path.join(__dirname, "static")));
 // Default route
 app.get("/", async function (req, res) {
 	if (req.session.user == null) {
-		res.render("welcome");
+		res.redirect("/welcome");
 	} else {
 		var cardSets = await CardSet.findAll({
 			raw: true,
