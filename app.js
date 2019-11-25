@@ -612,7 +612,7 @@ app.patch("/api/editset", async function (req, res) {
 	}
 })
 
-// start up the server
-var server = app.listen(app.get("port"), function () {
+// start up the server added dynamic port listening for Heroku
+var server = app.listen(process.env.PORT || app.get("port"), function () {
 	console.log("Server started...");
 });
