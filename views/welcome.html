@@ -24,6 +24,8 @@
                             {{cardSet_name}}
                         </div>
                     </div>
+                    {{#isLogged}}
+                    {{#isNotEqual ../user.user_id user_id}}
                     {{#isCardSetFav cardSet_id ../likedCardSets}}
                     <button id={{../cardSet_id}} type="button" class="btn btn-light btn-liked">
                         Like
@@ -33,6 +35,10 @@
                         Like
                     </button>
                     {{/isCardSetFav}}
+                    {{else}}
+                    {{/isNotEqual}}
+                    {{else}}
+                    {{/isLogged}}
                 </div>
                 <div class="d-flex justify-content-between">
                     <div class="col-9">

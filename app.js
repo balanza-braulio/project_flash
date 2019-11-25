@@ -89,6 +89,20 @@ Handlebars.registerHelper("isLogged", function (block) {
 		return block.inverse(this);
 });
 
+Handlebars.registerHelper("isEqual", function (a, b, options) {
+	if (a == b)
+		return options.fn(this);
+	else
+		return options.inverse(this);
+})
+
+Handlebars.registerHelper("isNotEqual", function (a, b, options) {
+	if (a != b)
+		return options.fn(this);
+	else
+		return options.inverse(this);
+})
+
 // Set static directoty
 app.use(express.static(path.join(__dirname, "static")));
 
@@ -114,7 +128,14 @@ app.get("/welcome", async (req, res) => {
 
 	try {
 		var t = await sequelize.transaction();
-		var cardSets = await CardSet.findAll({ order: [["popularity", "DESC"]], transaction: t });
+		var user = req.session.user
+		var cardSets = await CardSet.findAll({
+			raw: true,
+			order: [["popularity", "DESC"]],
+			include: [{ model: User, attributes: ['user_id'] }],
+			transaction: t
+		});
+
 		var likedCardSets = [];
 
 		if (req.session.user) {
@@ -129,7 +150,7 @@ app.get("/welcome", async (req, res) => {
 				raw: true,
 			});
 		}
-		res.render("welcome", { cardSets: cardSets, likedCardSets: likedCardSets })
+		res.render("welcome", { user: user, cardSets: cardSets, likedCardSets: likedCardSets })
 		t.commit();
 
 	}
@@ -142,7 +163,7 @@ app.get("/welcome", async (req, res) => {
 
 app.get("/login", function (req, res) {
 	if (req.session.user != null) {
-		res.redirect("/home");
+		res.redirect("/welcome");
 	} else {
 		res.render("login");
 	}
@@ -158,7 +179,7 @@ app.get("/home", async function (req, res) {
 			var cardSets = await CardSet.findAll({
 				raw: true,
 				where: { user_id: req.session.user.user_id },
-				order: [["cardSet_name", "DESC"]]
+				order: [["cardSet_name", "DESC"]],
 			});
 			const userWithLikedCardSets = await User.findByPk(req.session.user.user_id, {
 				attributes: {},
@@ -227,7 +248,7 @@ app.post("/sign-up", async function (req, res) {
 			});
 
 			req.session.user = user.dataValues;
-			res.redirect("/home");
+			res.redirect("/welcome");
 		} catch (e) {
 			console.log(e);
 		}
@@ -261,7 +282,7 @@ app.post("/login", async function (req, res) {
 				// If password correct, redirect user home else, show error
 				if (isCorrect) {
 					req.session.user = user;
-					res.redirect("/home");
+					res.redirect("/welcome");
 				} else {
 					res.render("login", { error: true, username: username });
 				}

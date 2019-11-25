@@ -17,9 +17,9 @@ body{
 
 }
 
-#content div{
+/* #content div{
   position: static;
-}
+} */
 
 #navbar{
     background-image: url(/space1.jpg);

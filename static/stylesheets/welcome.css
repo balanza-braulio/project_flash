@@ -11,6 +11,9 @@ h1 {
   stroke-width: 1;
   padding: 30px;
 }
+.setCard div{
+  position: static;
+}
 .test {
   background: linear-gradient(150deg, #8dba9a 0%, #006917 100%);
   min-height: 294px;
