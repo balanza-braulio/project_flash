@@ -4,6 +4,7 @@ jqueryNoConflict(document).ready(function () {
         var id = { id: `${$(this).attr("id")}` };
         var toLike = $(this)
             .closest(".cardFlex");
+        var toLikeName = $(toLike).find(".setCard_name").text();
         try {
             await $.ajax({
                 url: url,
@@ -17,13 +18,13 @@ jqueryNoConflict(document).ready(function () {
                     // });
                 },
                 error: e => {
+
+                    var name
                     var loginAlert = $("<div>")
                         .prop("id", "save_login")
-                        .prop("class", "alert alert-success alert-dismissible fade show")
+                        .prop("class", "alert alert-success alert-dismissible fade show ")
                         .prop("role", "alert")
-                        .css("position", "fixed")
-                        .css("width", "100%")
-                        .append($("<strong>").text("Error: "))
+                        .append($("<strong>").text("Cannot save " + toLikeName + ": "))
                         .append($("<p>").text(e.responseText));
                     var saveAlertClose = $("<button>")
                         .prop("type", "button")
@@ -34,11 +35,11 @@ jqueryNoConflict(document).ready(function () {
                             .prop("aria-hidden", "true")
                             .text("X"));
                     saveAlertClose.on("click",() => {
-                    loginAlert.fadeOut(500, () => {/*loginAlert.remove()*/})
+                    loginAlert.fadeOut(500, () => {loginAlert.remove()})
                     });
                     loginAlert.append(saveAlertClose);
 
-                    $(".navbar").after(loginAlert);
+                    $("#alerts").append(loginAlert);
                     return e;
                 }
             });

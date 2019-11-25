@@ -1,22 +1,21 @@
-h1{
+h1 {
   color: white;
 }
 
-#cardSets{
-  border-radius: 20px;
-  background: linear-gradient(30deg, #8a8d91 0%, #dadcdd 100% );
-  padding: 50px;
-}
 
 .setCard {
-  background: linear-gradient(150deg, #8dba9a 0%, #006917 100% );
+  background: linear-gradient(150deg, #8dba9a 0%, #006917 100%);
   border-radius: 20px;
   min-height: 294px;
   box-shadow: -5px 5px 2px rgba(0, 0, 0, 0.2);
   stroke-width: 1;
   padding: 30px;
 }
-
+.test {
+  background: linear-gradient(150deg, #8dba9a 0%, #006917 100%);
+  min-height: 294px;
+  min-width: 152px;
+}
 
 .setCard_name {
   min-height: 72px;
