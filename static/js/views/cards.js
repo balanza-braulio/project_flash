@@ -71,20 +71,33 @@ function showSlides(n) {
 
 function resize(str, selector) {
 
-    let size = 32
-    if(str.length > 200) {
-        selector.css("font-size", "16px")
-        let i = str.lastIndexOf(" ", 200)
+    let size = 60
+
+    if(str.length > 450) {
+        selector.css("font-size", "22px")
+        let i = str.lastIndexOf(" ", 450)
         return str.substring(0, i) + "..."
     }
+    if(str.length > 350) {
+        size = 24
+    }
+    else if(str.length > 300) {
+        size = 26
+    }
+    else if(str.length > 250) {
+        size = 28
+    }
+    else if(str.length > 200) {
+        size = 30
+    }
     else if(str.length > 150) { 
-        size = 16
+        size = 34
     }
     else if(str.length > 100) { 
-        size = 20
+        size = 38
     }
     else if(str.length > 50) {
-        size = 24
+        size = 46
     }
 
     selector.css("font-size", `${size}px`)
