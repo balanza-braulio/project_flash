@@ -18,6 +18,5 @@ $(document).ready(async function () {
             },
             error: (error) => { },
         });
-
     });
 });
