@@ -55,10 +55,14 @@ $("#add-flash").on("click", function() {
 })
 
 $("#submit").on("click", function() {
-    var flashcards = $(".flashcard-group")
+    var flashcards = $(".flashcard-group");
+    var errors = [];
     
     var title = $("#title").val().trim()
-    var description = $("#description").val().trim()
+    var description = $("#description").val().trim();
+
+    //remove all alerts
+    $(".alert-area").empty();
 
     //card_id, card_front, card_back
     var changed = [];
@@ -79,9 +83,8 @@ $("#submit").on("click", function() {
             changed.push(temp);
 
             if(temp.card_back == "" || temp.card_front == "") {
-                $(".alert")[0].innerHTML = "Card can't be empty from front or back"
-                $(".alert").removeAttr("hidden")
-                return
+                errors.push("Card can't be empty from front or back");
+                break;
             }
         }
 
@@ -94,9 +97,8 @@ $("#submit").on("click", function() {
             created.push(temp)
 
             if(temp.card_back == "" || temp.card_front == "") {
-                $(".alert")[0].innerHTML = "Card can't be empty from front or back"
-                $(".alert").removeAttr("hidden")
-                return
+                errors.push("Card can't be empty from front or back");
+                break;
             }
         }
 
@@ -107,14 +109,24 @@ $("#submit").on("click", function() {
     }
 
     if(title.length == 0) {
-        $(".alert")[0].innerHTML = "Title can not be empty!"
-        $(".alert").removeAttr("hidden")
-        return
+        errors.push("Title can not be empty!")
     }
 
     if(index - deleted.length < 2){
-        $(".alert")[0].innerHTML = "Card set must have at least two cards"
-        $(".alert").removeAttr("hidden")
+        errors.push("Card set must have at least two cards")
+    }
+
+    if(errors.length > 0) {
+        for(var x of errors)
+        {   
+            var temp = $("#alert-template").clone();
+            temp.removeAttr("id");
+            temp.removeAttr("hidden")
+            temp[0].innerHTML = x;
+
+            $(".alert-area").append(temp);
+        }
+
         return
     }
 

@@ -319,6 +319,23 @@ app.get("/create-flash", function (req, res) {
 });
 
 app.post("/create-flash", async function (req, res) {
+	if(!req.session.user) {
+		res.sendStatus(401);
+		return;
+	}
+
+	var exists = await CardSet.findOne({
+		where: {
+			cardSet_name: "req.body.title",
+			user_id: req.session.user.user_id
+		}
+	})
+
+	if(exists) { 
+		res.sendStatus(400);
+		return;
+	}
+
 	var cardSet = await CardSet.create({
 		cardSet_name: req.body.title,
 		cardSet_description: req.body.description,
@@ -569,7 +586,10 @@ app.get("/api/cardSet/:id", async function (req, res) {
 app.patch("/api/editset", async function (req, res) {
 	try{
 
-		console.log(req.body)
+		if(!req.session.user) {
+			res.sendStatus(401);
+			return;
+		}
 
 		var t = await sequelize.transaction();
 
