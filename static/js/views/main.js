@@ -1,8 +1,6 @@
 $(document).ready(async function () {
     $("#search-input").on("keyup", async function () {
 
-
-
         var search = $(this).val()
         if (search.length == 0) {
             var dropdown = $("#search-menu");
