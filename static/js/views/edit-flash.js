@@ -109,7 +109,7 @@ $("#submit").on("click", function() {
     }
 
     if(title.length == 0) {
-        errors.push("Title can not be empty!")
+        errors.push("Title can't be empty!")
     }
 
     if(index - deleted.length < 2){
@@ -121,7 +121,7 @@ $("#submit").on("click", function() {
         {   
             var temp = $("#alert-template").clone();
             temp.removeAttr("id");
-            temp.removeAttr("hidden")
+            temp.removeAttr("hidden");
             temp[0].innerHTML = x;
 
             $(".alert-area").append(temp);
@@ -142,7 +142,17 @@ $("#submit").on("click", function() {
     $.ajax({
         type: "PATCH",
         url: "/api/editset",
-        data: payload
+        data: payload,
+        statusCode: {
+            400: function() {
+                var temp = $("#alert-template").clone()
+                temp.removeAttr("id")
+                temp.removeAttr("hidden")
+                temp[0].innerHTML = "You can't have two sets which are named the same"
+
+                $(".alert-area").append(temp)
+            }
+        }
     }).then((id) => {
         window.location.replace(`/cardSet/${set_id}`);
     });

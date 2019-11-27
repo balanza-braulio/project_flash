@@ -326,7 +326,7 @@ app.post("/create-flash", async function (req, res) {
 
 	var exists = await CardSet.findOne({
 		where: {
-			cardSet_name: "req.body.title",
+			cardSet_name: req.body.title,
 			user_id: req.session.user.user_id
 		}
 	})
@@ -588,6 +588,18 @@ app.patch("/api/editset", async function (req, res) {
 
 		if(!req.session.user) {
 			res.sendStatus(401);
+			return;
+		}
+
+		var exists = await CardSet.findOne({
+			where: {
+				cardSet_name: req.body.title,
+				user_id: req.session.user.user_id
+			}
+		})
+	
+		if(exists) { 
+			res.sendStatus(400);
 			return;
 		}
 
