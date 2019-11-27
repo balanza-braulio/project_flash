@@ -1,5 +1,5 @@
 // Libraries and dependencies
-const { sequelize, User, Card, CardSet, Liked } = require("./models");
+const { sequelize,Sequelize, User, Card, CardSet, Liked } = require("./models");
 const express = require("express");
 const hbs = require("express-handlebars");
 const Handlebars = require("handlebars");
@@ -11,6 +11,9 @@ const path = require("path");
 // Initialize Express
 app = express();
 app.set("port", 3002);
+
+// Sequelize operators
+const Op = Sequelize.Op;
 
 // Initialize body parser
 app.use(bodyParser.json());
@@ -319,23 +322,6 @@ app.get("/create-flash", function (req, res) {
 });
 
 app.post("/create-flash", async function (req, res) {
-	if(!req.session.user) {
-		res.sendStatus(401);
-		return;
-	}
-
-	var exists = await CardSet.findOne({
-		where: {
-			cardSet_name: req.body.title,
-			user_id: req.session.user.user_id
-		}
-	})
-
-	if(exists) { 
-		res.sendStatus(400);
-		return;
-	}
-
 	var cardSet = await CardSet.create({
 		cardSet_name: req.body.title,
 		cardSet_description: req.body.description,
@@ -435,8 +421,38 @@ app.get("/edit-flash/:id", async function (req, res) {
 // SQL queries no rendering
 //////
 
+
+app.get("/api/search-name/:name", async (req, res) => {
+
+	var regEx = req.params.name;
+	try {
+		var t = await sequelize.transaction();
+		var x = await CardSet.findAll({
+			where: {
+				cardSet_name: { [Op.like]: regEx + '%'    }
+			},
+			attributes: ["cardSet_id","cardSet_name"],
+			order: [["popularity", "DESC"]],
+			limit: 5,
+			transaction: t,
+			raw: true,
+		});
+		t.commit();
+		res.status(200).send(x)
+	} catch (e) {
+		console.log(e);
+		res.status(400).send("Error searching for card sets :c")
+		t.rollback();
+	}
+
+
+});
+
 // Deletes liked association
 app.delete('/api/deleteLike/:id', async (req, res) => {
+
+	if (!req.session.user)
+		return res.status(400).send("There was an error unliking the card set!");
 
 	try {
 		var t = await sequelize.transaction();
@@ -454,6 +470,12 @@ app.delete('/api/deleteLike/:id', async (req, res) => {
 
 // Deletes a  users card set
 app.delete("/deleteCardSet/:id", async function (req, res) {
+
+	if (!req.session.user)
+		return res.status(400).send("There was an error deleting the card set!");
+
+	// if (!isLogged)
+	// 	res.redirect("/welcome");
 	try {
 		var t = await sequelize.transaction();
 		// Find all the card sets to delete 
@@ -480,6 +502,8 @@ app.delete("/deleteCardSet/:id", async function (req, res) {
 
 app.post("/api/likeCardSet/", async (req, res) => {
 
+	if (!req.session.user)
+		return res.status(400).send("Please log in to like this card set!");
 	var idToLike = req.body.id;
 	var user = req.session.user
 	try {
@@ -573,6 +597,7 @@ app.get("/api/cardSet/:id", async function (req, res) {
 				{
 					model: User,
 					attributes: ["username"]
+
 				}]
 		})
 
@@ -584,24 +609,9 @@ app.get("/api/cardSet/:id", async function (req, res) {
 })
 
 app.patch("/api/editset", async function (req, res) {
-	try{
+	try {
 
-		if(!req.session.user) {
-			res.sendStatus(401);
-			return;
-		}
-
-		var exists = await CardSet.findOne({
-			where: {
-				cardSet_name: req.body.title,
-				user_id: req.session.user.user_id
-			}
-		})
-	
-		if(exists) { 
-			res.sendStatus(400);
-			return;
-		}
+		console.log(req.body)
 
 		var t = await sequelize.transaction();
 
@@ -610,32 +620,32 @@ app.patch("/api/editset", async function (req, res) {
 			cardSet_name: req.body.title,
 			cardSet_description: req.body.description
 		},
-		{
-			where: { cardSet_id: req.body.cardSet_id },
-			transaction: t
-		});
+			{
+				where: { cardSet_id: req.body.cardSet_id },
+				transaction: t
+			});
 
 		//create new cards
-		if(req.body.create)
-			await Card.bulkCreate(req.body.create, {transaction: t});
+		if (req.body.create)
+			await Card.bulkCreate(req.body.create, { transaction: t });
 
 		//update changed cards
-		if(req.body.change){
-			for(var card of req.body.change) {
+		if (req.body.change) {
+			for (var card of req.body.change) {
 				await Card.update({
 					card_front: card.card_front,
 					card_back: card.card_back
 				},
-				{
-					where: { card_id: card.card_id },
-					transaction: t
-				});
+					{
+						where: { card_id: card.card_id },
+						transaction: t
+					});
 			}
 		}
 
 		//delete cards
-		if(req.body.destroy) {
-			for(var id of req.body.destroy) {
+		if (req.body.destroy) {
+			for (var id of req.body.destroy) {
 				await Card.destroy({ where: { card_id: id }, transaction: t });
 			}
 		}
@@ -644,7 +654,7 @@ app.patch("/api/editset", async function (req, res) {
 
 		res.status(200).send();
 
-	} catch(e) {
+	} catch (e) {
 		console.log(e);
 		if (t)
 			await t.rollback();

@@ -4,6 +4,10 @@
   padding: 50px;
 }
 
+#cardSets div {
+  position: static;
+}
+
 .setCard {
   background: linear-gradient(150deg, #f00000 0%, #663b39 67%, #5c0000 100%);
   border-radius: 20px;
@@ -12,9 +16,7 @@
   stroke-width: 1;
   padding: 30px;
 }
-.setCard div{
-  position: static;
-}
+
 
 .setCard_liked{
   background: linear-gradient(150deg, #0c008f 0%, #0066d4 100% );

@@ -43,6 +43,19 @@ jqueryNoConflict(document).ready(function () {
                         $("#alerts").append(alreadyLikedAlert);
                         return e;
                     }
+                    else if (e.status == 400) {
+                        var notLogged = $("<div>")
+                        .prop("id", "alredyLiked")
+                        .prop("class", "alert alert-danger alert-dismissible fade show ")
+                        .prop("role", "alert")
+                        .append($("<strong>").text("Cannot like this card set (" + toLikeName + ")."))
+                        .append($("<p>").text(e.responseText));
+
+                    notLogged.delay(2000).fadeOut(1000, () => { notLogged.remove() });
+
+                    $("#alerts").append(notLogged);
+                    return e; 
+                    }
                 }
             });
         } catch (e) {
@@ -63,7 +76,7 @@ jqueryNoConflict(document).ready(function () {
                         .prop("id", "cannotUnlike")
                         .prop("class", "alert alert-danger alert-dismissible fade show ")
                         .prop("role", "alert")
-                        .append($("<strong>").text("Cannot unlike this card set (" + toLikeName + ")."))
+                        .append($("<strong>").text(e.responseText))
 
                     cannotUnlike.delay(2000).fadeOut(1000, () => { cannotUnlike.remove() });
 

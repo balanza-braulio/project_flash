@@ -46,7 +46,7 @@ module.exports = {
 
   // Export instance of sequelize for transactions
   sequelize,
-
+  Sequelize,
   // Export Models
   User,
   Card,
