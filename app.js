@@ -1,5 +1,5 @@
 // Libraries and dependencies
-const { sequelize,Sequelize, User, Card, CardSet, Liked } = require("./models");
+const { sequelize, Sequelize, User, Card, CardSet, Liked } = require("./models");
 const express = require("express");
 const hbs = require("express-handlebars");
 const Handlebars = require("handlebars");
@@ -322,7 +322,7 @@ app.get("/create-flash", function (req, res) {
 });
 
 app.post("/create-flash", async function (req, res) {
-	if(!req.session.user) {
+	if (!req.session.user) {
 		res.sendStatus(401);
 		return;
 	}
@@ -422,6 +422,47 @@ app.get("/edit-flash/:id", async function (req, res) {
 	}
 })
 
+app.get("/search-name/:name", async (req, res) => {
+
+	try {
+		var t = await sequelize.transaction();
+		var user = req.session.user
+		var regEx = req.params.name + '%';
+
+		var cardSets = await CardSet.findAll({
+			where: {
+				cardSet_name: { [Op.like]: regEx }
+			},
+			order: [["popularity", "DESC"]],
+			include: [{ model: User, attributes: ['user_id'] }],
+			transaction: t
+		});
+
+		var likedCardSets = [];
+
+		if (req.session.user) {
+			likedCardSets = await Liked.findAll({
+				where: {
+					user_id: req.session.user.user_id
+				},
+				attributes: [
+					"cardSet_id",
+				],
+				transaction: t,
+				raw: true,
+			});
+		}
+		res.render("search_name", { user: user, cardSets: cardSets, likedCardSets: likedCardSets })
+		t.commit();
+
+	}
+	catch (e) {
+		console.log(e);
+		t.rollback();
+	}
+
+});
+
 ///////
 // SQL queries no rendering
 //////
@@ -429,14 +470,14 @@ app.get("/edit-flash/:id", async function (req, res) {
 
 app.get("/api/search-name/:name", async (req, res) => {
 
-	var regEx = req.params.name;
+	var regEx = '%' + req.params.name + '%';
 	try {
 		var t = await sequelize.transaction();
 		var x = await CardSet.findAll({
 			where: {
-				cardSet_name: { [Op.like]: regEx + '%'    }
+				cardSet_name: { [Op.like]: regEx  }
 			},
-			attributes: ["cardSet_id","cardSet_name"],
+			attributes: ["cardSet_id", "cardSet_name"],
 			order: [["popularity", "DESC"]],
 			limit: 5,
 			transaction: t,
@@ -628,10 +669,10 @@ app.patch("/api/editset", async function (req, res) {
 			cardSet_name: req.body.title,
 			cardSet_description: req.body.description
 		},
-		{
-			where: { cardSet_id: req.body.cardSet_id },
-			transaction: t
-		});
+			{
+				where: { cardSet_id: req.body.cardSet_id },
+				transaction: t
+			});
 
 		//create new cards
 		if (req.body.create)
@@ -644,10 +685,10 @@ app.patch("/api/editset", async function (req, res) {
 					card_front: card.card_front,
 					card_back: card.card_back
 				},
-				{
-					where: { card_id: card.card_id },
-					transaction: t
-				});
+					{
+						where: { card_id: card.card_id },
+						transaction: t
+					});
 			}
 		}
 

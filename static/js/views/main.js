@@ -1,11 +1,17 @@
 $(document).ready(async function () {
+
+
+    $("#search-to").prop("action", "/search-name/" + $("#search-input").val());
     $("#search-input").on("keyup", async function () {
 
         var search = $(this).val()
+
+        $("#search-to").prop("action", "/search-name/" + search);
+
         if (search.length == 0) {
             var dropdown = $("#search-menu");
             $(dropdown).fadeOut(500).remove();
-        } 
+        }
         const url = `/api/search-name/${search}`;
         const toAppend = [];
         $.ajax({

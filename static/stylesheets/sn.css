@@ -1,0 +1,75 @@
+h1 {
+  color: white;
+}
+
+
+.setCard {
+  background: linear-gradient(150deg, #8dba9a 0%, #006917 100%);
+  border-radius: 20px;
+  min-height: 294px;
+  box-shadow: -5px 5px 2px rgba(0, 0, 0, 0.2);
+  stroke-width: 1;
+  padding: 30px;
+}
+.cardSets div{
+  position: static;
+}
+.test {
+  background: linear-gradient(150deg, #8dba9a 0%, #006917 100%);
+  min-height: 294px;
+  min-width: 152px;
+}
+
+.setCard_name {
+  min-height: 72px;
+  padding: 10px 10px 10px 20px;
+  border-radius: 20px;
+  background-color: #ffffff;
+  background-size: cover;
+  font-family: Montserrat;
+  font-size: 20px;
+  text-align: justify;
+  color: #000000;
+  text-decoration: rgb(0, 0, 0);
+  line-height: 24px;
+}
+
+.setCard_delBtn {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+}
+
+.setCard_unlike {
+  border-radius: 10px;
+}
+
+.setCard_description {
+  min-height: 152px;
+  padding: 10px 10px 10px 20px;
+  border-radius: 20px;
+  background-color: #ffffff;
+  background-size: cover;
+  font-family: Montserrat;
+  font-size: 20px;
+  color: #000000;
+  text-decoration: rgb(0, 0, 0);
+  line-height: 24px;
+}
+
+.setCard_viewBtn {
+  padding: 10px;
+  mix-blend-mode: overlay;
+  height: 72px;
+  background: white;
+  font-family: Montserrat;
+  font-size: 36px;
+  text-decoration: rgb(255, 255, 255);
+  line-height: 44px;
+}
+
+.mask:hover {
+  background-color: white;
+  opacity: 0.5;
+  transition: 0.3s;
+}
