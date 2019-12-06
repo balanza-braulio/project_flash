@@ -1,4 +1,4 @@
-jqueryNoConflict(document).ready(function () {
+$(document).ready(function () {
     $(document.body).on("click", ".btn-like", async function () {
         var url = '/api/likeCardSet/';
         var id = { id: `${$(this).prop("id")}` };
